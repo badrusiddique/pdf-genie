@@ -20,18 +20,27 @@ Run them in this exact order. If any step fails — STOP. Fix it first. Do not c
 | Build | `pnpm build` | SSR failures, missing client/server boundaries, broken static generation |
 | **UI smoke test** | `pnpm dev` + Playwright | **Tool pages render real UI, not "Coming soon"** |
 
-### UI smoke test requirement (mandatory for tool changes)
+### Post-Phase Review Protocol (mandatory before marking any phase complete)
 
-Before committing any new tool or change to `app/[tool]/page.tsx`, you MUST:
+Two passes required. Do not commit or claim phase complete until both are done.
 
-1. Start the dev server: `pnpm dev`
-2. Run Playwright against affected pages using the `webapp-testing` skill
-3. Confirm every modified/added tool slug renders its component — not the "Coming soon" fallback
-4. **Report results to the user** before committing — list each page checked and its status
+**Pass 1 — Code review**
+- Invoke `superpowers:requesting-code-review` skill
+- Checks: TypeScript strictness, error boundaries, test quality, security, code readability
 
-**Never claim QA passes without specifying what UI pages were smoke-tested.**
+**Pass 2 — Playwright functional QA**
+- Start dev server: `pnpm dev`
+- Use `webapp-testing` skill to test every affected tool page
+- Confirm tool renders its real component, NOT the "Coming soon" fallback
+- Verify against ilovepdf.com parity: file type acceptance, output validity, error handling, mobile usability
+- Write a Playwright spec at `e2e/qa/phase-N-qa.spec.ts` that runs in CI as regression guard
 
-This rule exists because unit tests + build passed while Compress PDF shipped a "Coming soon" placeholder — the missing `CompressPdfTool.tsx` component and `page.tsx` case were invisible to static checks.
+**Report to user before committing:**
+- List every page smoke-tested and its result
+- Confirm code review pass/fail
+- Confirm E2E spec written and passing
+
+**Never claim QA passes based on static checks alone.** `typecheck + lint + test + build` cannot detect a missing component case in a runtime switch — that requires a real browser test.
 
 ### Common failure patterns to watch for
 
