@@ -78,6 +78,21 @@ describe('Tool Registry', () => {
         ).toBeGreaterThan(0)
       }
     })
+
+    it('all processingMode values are valid', () => {
+      const valid = new Set<string>(['client', 'server', 'ai'])
+      for (const tool of tools) {
+        expect(valid.has(tool.processingMode), `tool "${tool.slug}" has invalid processingMode "${tool.processingMode}"`).toBe(true)
+      }
+    })
+
+    it('all icon values are non-empty valid identifier strings', () => {
+      const validIdentifier = /^[A-Z][a-zA-Z0-9]*$/
+      for (const tool of tools) {
+        expect(tool.icon, `tool "${tool.slug}" has empty icon`).toBeTruthy()
+        expect(validIdentifier.test(tool.icon), `tool "${tool.slug}" has invalid icon format "${tool.icon}"`).toBe(true)
+      }
+    })
   })
 
   describe('category distribution', () => {

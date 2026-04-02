@@ -418,14 +418,17 @@ export const tools: Tool[] = [
   },
 ]
 
+/** Returns all tools belonging to the given category, in registration order. */
 export function getToolsByCategory(category: ToolCategory): Tool[] {
   return tools.filter((t) => t.category === category)
 }
 
+/** Returns the tool with the given slug, or undefined if not found. */
 export function getToolBySlug(slug: string): Tool | undefined {
   return tools.find((t) => t.slug === slug)
 }
 
+/** Human-readable display labels for each tool category. Used by UI filter tabs. */
 export const CATEGORY_LABELS: Record<ToolCategory, string> = {
   organize: 'Organize PDF',
   optimize: 'Optimize PDF',
@@ -436,6 +439,7 @@ export const CATEGORY_LABELS: Record<ToolCategory, string> = {
   intelligence: 'PDF Intelligence',
 }
 
+/** Ordered list of all tool categories. Determines tab order on the homepage. */
 export const CATEGORIES: ToolCategory[] = [
   'organize',
   'optimize',
