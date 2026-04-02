@@ -1,19 +1,22 @@
 import Link from 'next/link'
 import { CATEGORIES, CATEGORY_LABELS, getToolsByCategory } from '@/config/tools'
+import { GenieLampIcon } from '@/components/ui/GenieLampIcon'
 
 export function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="bg-[--color-primary] text-white/80 mt-24">
+    <footer className="bg-[#1B3A6B] text-white/80 mt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
 
           {/* Brand column */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-xl" aria-hidden>🪔</span>
-              <span className="font-display text-lg font-semibold text-white">pdf-genie</span>
+              <GenieLampIcon className="w-7 h-7" variant="white" />
+              <span className="font-display text-base font-bold tracking-widest uppercase text-white">
+                PDF GENIE
+              </span>
             </div>
             <p className="text-sm leading-relaxed text-white/60">
               Every PDF tool, beautifully simple. Free, open-source, and privacy-first.
@@ -52,7 +55,7 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-white/40">
-          <p>© {year} pdf-genie. Open source under the MIT License.</p>
+          <p>© {year} PDF GENIE. Open source under the MIT License.</p>
           <div className="flex items-center gap-4">
             <a href="https://github.com/badrusiddique/pdf-genie" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">GitHub</a>
           </div>
