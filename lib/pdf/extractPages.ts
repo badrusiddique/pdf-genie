@@ -2,6 +2,9 @@ import { PDFDocument } from 'pdf-lib'
 
 /**
  * Extract specific pages into a new PDF.
+ * Pages are always output in ascending page number order,
+ * regardless of the order specified in pageNumbers.
+ * Duplicate page numbers are silently deduplicated.
  * @param pageNumbers - 1-indexed page numbers to keep
  */
 export async function extractPagesFromPdf(

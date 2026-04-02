@@ -8,7 +8,6 @@ export interface ScanToPdfOptions {
   pageSize?: PageSize
   orientation?: PageOrientation
   margin?: PageMargin
-  mergeAll?: boolean
 }
 
 const PAGE_DIMENSIONS: Record<PageSize, [number, number]> = {

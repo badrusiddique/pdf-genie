@@ -29,7 +29,7 @@ export async function organizePdf(
   for (let i = 0; i < pages.length; i++) {
     const page = pages[i]
     const op = operations[i]
-    if (op.rotation) {
+    if (op.rotation != null && op.rotation !== 0) {
       page.setRotation(degrees(op.rotation))
     }
     doc.addPage(page)

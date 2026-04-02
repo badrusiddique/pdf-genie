@@ -46,7 +46,9 @@ export async function splitPdfToPages(pdfBytes: Uint8Array): Promise<Uint8Array[
  * Split a PDF into chunks of N pages each.
  */
 export async function splitPdfIntoChunks(pdfBytes: Uint8Array, chunkSize: number): Promise<Uint8Array[]> {
-  if (chunkSize < 1) throw new Error('Chunk size must be at least 1')
+  if (chunkSize < 1 || !Number.isInteger(chunkSize)) {
+    throw new Error('Chunk size must be a positive integer')
+  }
   const source = await PDFDocument.load(pdfBytes)
   const total = source.getPageCount()
   const ranges: SplitRange[] = []
