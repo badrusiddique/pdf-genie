@@ -11,8 +11,8 @@ import {
 
 describe('Tool Registry', () => {
   describe('tools array', () => {
-    it('has exactly 27 tools', () => {
-      expect(tools).toHaveLength(27)
+    it('has exactly 31 tools', () => {
+      expect(tools).toHaveLength(31)
     })
 
     it('has no duplicate slugs', () => {
