@@ -1,48 +1,51 @@
 import Link from 'next/link'
-import { CATEGORIES, CATEGORY_LABELS, getToolsByCategory } from '@/config/tools'
 import { GenieLampIcon } from '@/components/ui/GenieLampIcon'
+import { CATEGORIES, CATEGORY_LABELS, getToolsByCategory } from '@/config/tools'
 
 export function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="bg-[#1B3A6B] text-white/80 mt-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-
+    <footer style={{ background: 'rgba(6,11,24,0.95)', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-14">
           {/* Brand column */}
           <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2 mb-3">
-              <GenieLampIcon className="w-7 h-7" variant="white" />
-              <span className="font-display text-base font-bold tracking-widest uppercase text-white">
-                PDF GENIE
+            <div className="flex items-center gap-2 mb-4">
+              <GenieLampIcon className="w-8 h-8" animated />
+              <span className="font-display text-sm font-bold tracking-[0.2em] uppercase" style={{ color: '#F1F5F9' }}>
+                PDF <span style={{ color: '#F59E0B' }}>GENIE</span>
               </span>
             </div>
-            <p className="text-sm leading-relaxed text-white/60">
+            <p className="text-xs leading-relaxed mb-5" style={{ color: '#475569' }}>
               Every PDF tool, beautifully simple. Free, open-source, and privacy-first.
             </p>
             <a
               href="https://github.com/badrusiddique/pdf-genie"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 mt-4 text-sm text-white/60 hover:text-white transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg transition-all duration-200"
+              style={{ background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.2)', color: '#A78BFA' }}
             >
               ★ Star on GitHub
             </a>
           </div>
 
-          {/* Tool category columns — show first 3 categories */}
-          {CATEGORIES.slice(0, 3).map(category => (
+          {/* Tool columns - first 4 categories */}
+          {CATEGORIES.slice(0, 4).map(category => (
             <div key={category}>
-              <p className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-3">
+              <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: '#7C3AED', letterSpacing: '0.12em' }}>
                 {CATEGORY_LABELS[category]}
               </p>
-              <ul className="space-y-1.5">
+              <ul className="space-y-2">
                 {getToolsByCategory(category).map(tool => (
                   <li key={tool.slug}>
                     <Link
                       href={`/${tool.slug}`}
-                      className="text-sm text-white/60 hover:text-white transition-colors"
+                      className="text-xs transition-colors duration-150"
+                      style={{ color: '#475569' }}
+                      onMouseEnter={e => (e.currentTarget.style.color = '#94A3B8')}
+                      onMouseLeave={e => (e.currentTarget.style.color = '#475569')}
                     >
                       {tool.name}
                     </Link>
@@ -54,10 +57,12 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-white/40">
-          <p>© {year} PDF GENIE. Open source under the MIT License.</p>
-          <div className="flex items-center gap-4">
-            <a href="https://github.com/badrusiddique/pdf-genie" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">GitHub</a>
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+          <p className="text-xs" style={{ color: '#334155' }}>
+            © {year} PDF Genie. Open source under the MIT License.
+          </p>
+          <div className="flex items-center gap-6 text-xs" style={{ color: '#334155' }}>
+            <a href="https://github.com/badrusiddique/pdf-genie" target="_blank" rel="noopener noreferrer" className="transition-colors" onMouseEnter={e => (e.currentTarget.style.color = '#94A3B8')} onMouseLeave={e => (e.currentTarget.style.color = '#334155')}>GitHub</a>
           </div>
         </div>
       </div>

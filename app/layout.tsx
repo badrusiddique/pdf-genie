@@ -24,6 +24,10 @@ export const metadata: Metadata = {
   },
   description: 'Free online PDF tools — merge, split, compress, convert, edit, sign and more. Fast, private, no signup required.',
   keywords: ['PDF', 'merge PDF', 'split PDF', 'compress PDF', 'convert PDF', 'PDF tools'],
+  icons: {
+    icon: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
   openGraph: {
     siteName: 'pdf-genie',
     type: 'website',
@@ -40,7 +44,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${fraunces.variable} ${instrumentSans.variable}`}>
-      <body className="min-h-screen bg-[--color-bg] text-[--color-text]">
+      <body className="min-h-screen" style={{ background: '#060B18', color: '#F1F5F9' }}>
         <Navbar />
         <div className="pt-14">{children}</div>
         <Footer />

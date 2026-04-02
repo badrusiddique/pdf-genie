@@ -2,10 +2,10 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { ChevronDown, Menu, X } from 'lucide-react'
+import { ChevronDown, Menu, X, Sparkles } from 'lucide-react'
 import { CATEGORIES, CATEGORY_LABELS, getToolsByCategory } from '@/config/tools'
-import { cn } from '@/lib/utils'
 import { GenieLampIcon } from '@/components/ui/GenieLampIcon'
+import { cn } from '@/lib/utils'
 
 export function Navbar() {
   const [megaOpen, setMegaOpen] = useState(false)
@@ -13,52 +13,91 @@ export function Navbar() {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#E5E0D8]"
-      style={{ boxShadow: '0 1px 0 0 rgba(0,0,0,0.06)' }}
+      className="fixed top-0 left-0 right-0 z-50"
+      style={{
+        background: 'rgba(6,11,24,0.85)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
+      }}
     >
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center gap-6" aria-label="Main navigation">
-
+      <nav
+        className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center gap-6"
+        aria-label="Main navigation"
+      >
         {/* Brand */}
-        <Link href="/" className="flex items-center gap-2 shrink-0 group" aria-label="pdf-genie" onClick={() => setMobileOpen(false)}>
-          <GenieLampIcon className="w-7 h-7" />
-          <span className="font-display text-base font-bold tracking-widest uppercase text-[#1B3A6B]">
-            PDF GENIE
+        <Link
+          href="/"
+          aria-label="pdf-genie"
+          className="flex items-center gap-2.5 shrink-0 group"
+          onClick={() => setMobileOpen(false)}
+        >
+          <GenieLampIcon className="w-8 h-8 transition-transform duration-300 group-hover:scale-110" animated />
+          <span
+            className="font-display text-sm font-bold tracking-[0.2em] uppercase"
+            style={{ color: '#F1F5F9' }}
+          >
+            PDF{' '}
+            <span
+              style={{
+                background: 'linear-gradient(135deg, #F59E0B 0%, #FCD34D 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
+              GENIE
+            </span>
           </span>
         </Link>
 
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-1 flex-1">
-          {/* All Tools mega-menu trigger */}
+          {/* All Tools mega-menu */}
           <div className="relative">
             <button
               className={cn(
-                'flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors',
-                'text-[#1A1A1A] hover:text-[#1B3A6B] hover:bg-[#F5F0E8]',
-                megaOpen && 'bg-[#F5F0E8] text-[#1B3A6B]',
+                'flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200',
+                'text-[#94A3B8] hover:text-[#F1F5F9]',
+                megaOpen && 'text-[#F1F5F9] bg-white/5',
               )}
+              style={{ fontSize: '13px' }}
               onMouseEnter={() => setMegaOpen(true)}
               onMouseLeave={() => setMegaOpen(false)}
               onClick={() => setMegaOpen(v => !v)}
               aria-expanded={megaOpen}
               aria-haspopup="true"
             >
+              <Sparkles className="w-3.5 h-3.5 text-[#F59E0B]" />
               All PDF Tools
-              <ChevronDown className={cn('w-4 h-4 transition-transform', megaOpen && 'rotate-180')} />
+              <ChevronDown className={cn('w-3.5 h-3.5 transition-transform duration-200', megaOpen && 'rotate-180')} />
             </button>
 
-            {/* Mega-menu dropdown */}
+            {/* Mega-menu */}
             {megaOpen && (
               <div
-                className="absolute top-full left-0 mt-1 w-[720px] bg-white border border-[#E5E0D8] rounded-xl shadow-lg p-6 grid grid-cols-3 gap-6"
+                className="absolute top-full left-0 mt-2 w-[760px]"
+                style={{
+                  background: 'rgba(15,23,41,0.95)',
+                  backdropFilter: 'blur(20px)',
+                  WebkitBackdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(124,58,237,0.2)',
+                  borderRadius: '16px',
+                  boxShadow: '0 25px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(124,58,237,0.1)',
+                  padding: '24px',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(4, 1fr)',
+                  gap: '20px',
+                }}
                 onMouseEnter={() => setMegaOpen(true)}
                 onMouseLeave={() => setMegaOpen(false)}
                 role="menu"
               >
                 {CATEGORIES.map(category => {
-                  const categoryTools = getToolsByCategory(category).slice(0, 6)
+                  const categoryTools = getToolsByCategory(category).slice(0, 5)
                   return (
                     <div key={category}>
-                      <p className="text-xs font-semibold uppercase tracking-wider text-[#6B7280] mb-2">
+                      <p style={{ color: '#7C3AED', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '10px' }}>
                         {CATEGORY_LABELS[category]}
                       </p>
                       <ul className="space-y-1">
@@ -66,7 +105,10 @@ export function Navbar() {
                           <li key={tool.slug}>
                             <Link
                               href={`/${tool.slug}`}
-                              className="block text-sm text-[#1A1A1A] hover:text-[#1B3A6B] py-0.5 transition-colors"
+                              className="block py-1 transition-colors duration-150"
+                              style={{ fontSize: '12px', color: '#94A3B8' }}
+                              onMouseEnter={e => (e.currentTarget.style.color = '#F1F5F9')}
+                              onMouseLeave={e => (e.currentTarget.style.color = '#94A3B8')}
                               onClick={() => setMegaOpen(false)}
                               role="menuitem"
                             >
@@ -84,13 +126,21 @@ export function Navbar() {
 
           {/* Quick links */}
           {['merge-pdf', 'split-pdf', 'compress-pdf'].map(slug => {
-            const href = `/${slug}`
             const label = slug.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')
             return (
               <Link
                 key={slug}
-                href={href}
-                className="px-3 py-2 text-sm font-medium text-[#1A1A1A] hover:text-[#1B3A6B] hover:bg-[#F5F0E8] rounded-lg transition-colors"
+                href={`/${slug}`}
+                className="px-4 py-2 rounded-lg transition-all duration-200"
+                style={{ fontSize: '13px', color: '#94A3B8', fontWeight: 500 }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.color = '#F1F5F9'
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.05)'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.color = '#94A3B8'
+                  e.currentTarget.style.background = 'transparent'
+                }}
               >
                 {label}
               </Link>
@@ -98,9 +148,33 @@ export function Navbar() {
           })}
         </div>
 
+        {/* CTA */}
+        <a
+          href="https://github.com/badrusiddique/pdf-genie"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium transition-all duration-200"
+          style={{
+            background: 'rgba(124,58,237,0.15)',
+            border: '1px solid rgba(124,58,237,0.3)',
+            color: '#A78BFA',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.background = 'rgba(124,58,237,0.25)'
+            e.currentTarget.style.borderColor = 'rgba(124,58,237,0.5)'
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = 'rgba(124,58,237,0.15)'
+            e.currentTarget.style.borderColor = 'rgba(124,58,237,0.3)'
+          }}
+        >
+          ★ Star on GitHub
+        </a>
+
         {/* Mobile hamburger */}
         <button
-          className="ml-auto md:hidden p-2 rounded-lg text-[#1A1A1A] hover:bg-[#F5F0E8] transition-colors"
+          className="ml-auto md:hidden p-2 rounded-lg transition-colors"
+          style={{ color: '#94A3B8' }}
           onClick={() => setMobileOpen(v => !v)}
           aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={mobileOpen}
@@ -111,20 +185,29 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-[#E5E0D8] bg-white max-h-[80vh] overflow-y-auto">
+        <div
+          className="md:hidden max-h-[80vh] overflow-y-auto"
+          style={{
+            background: 'rgba(6,11,24,0.98)',
+            borderTop: '1px solid rgba(255,255,255,0.06)',
+          }}
+        >
           {CATEGORIES.map(category => {
             const categoryTools = getToolsByCategory(category)
             return (
-              <div key={category} className="px-4 py-3 border-b border-[#E5E0D8] last:border-0">
-                <p className="text-xs font-semibold uppercase tracking-wider text-[#6B7280] mb-2">
+              <div key={category} className="px-4 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#7C3AED', letterSpacing: '0.12em' }}>
                   {CATEGORY_LABELS[category]}
                 </p>
-                <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                   {categoryTools.map(tool => (
                     <Link
                       key={tool.slug}
                       href={`/${tool.slug}`}
-                      className="text-sm text-[#1A1A1A] hover:text-[#1B3A6B] py-1 transition-colors"
+                      className="text-sm py-1 transition-colors"
+                      style={{ color: '#94A3B8' }}
+                      onMouseEnter={e => (e.currentTarget.style.color = '#F1F5F9')}
+                      onMouseLeave={e => (e.currentTarget.style.color = '#94A3B8')}
                       onClick={() => setMobileOpen(false)}
                     >
                       {tool.name}
