@@ -94,17 +94,17 @@ export function ToolResult({ downloadUrl, fileName, onReset }: ToolResultProps) 
           download={fileName}
           className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-sm transition-all duration-200 no-underline"
           style={{
-            background: 'linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%)',
+            background: 'linear-gradient(135deg, #06B6D4 0%, #0891B2 100%)',
             color: '#ffffff',
-            boxShadow: '0 4px 20px rgba(124,58,237,0.35)',
+            boxShadow: '0 4px 20px rgba(6,182,212,0.35)',
           }}
           onMouseEnter={e => {
             e.currentTarget.style.transform = 'translateY(-1px)'
-            e.currentTarget.style.boxShadow = '0 8px 25px rgba(124,58,237,0.45)'
+            e.currentTarget.style.boxShadow = '0 8px 25px rgba(6,182,212,0.45)'
           }}
           onMouseLeave={e => {
             e.currentTarget.style.transform = 'translateY(0)'
-            e.currentTarget.style.boxShadow = '0 4px 20px rgba(124,58,237,0.35)'
+            e.currentTarget.style.boxShadow = '0 4px 20px rgba(6,182,212,0.35)'
           }}
         >
           <Download className="w-4 h-4 shrink-0" />

@@ -61,7 +61,7 @@ function SortableCard({
       {/* Order badge */}
       <div
         className="absolute top-2 left-2 z-10 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold"
-        style={{ background: 'rgba(124,58,237,0.9)', color: '#fff' }}
+        style={{ background: 'rgba(6,182,212,0.9)', color: '#fff' }}
       >
         {index + 1}
       </div>
@@ -101,21 +101,21 @@ function AddFileCard({ onClick, disabled }: { onClick: () => void; disabled: boo
       style={{
         width: '160px',
         height: '226px', // matches A4 ratio thumbnail
-        background: 'rgba(124,58,237,0.06)',
-        border: '2px dashed rgba(124,58,237,0.3)',
+        background: 'rgba(6,182,212,0.06)',
+        border: '2px dashed rgba(6,182,212,0.3)',
       }}
       onMouseEnter={e => {
-        e.currentTarget.style.background = 'rgba(124,58,237,0.12)'
-        e.currentTarget.style.borderColor = 'rgba(124,58,237,0.6)'
+        e.currentTarget.style.background = 'rgba(6,182,212,0.12)'
+        e.currentTarget.style.borderColor = 'rgba(6,182,212,0.6)'
       }}
       onMouseLeave={e => {
-        e.currentTarget.style.background = 'rgba(124,58,237,0.06)'
-        e.currentTarget.style.borderColor = 'rgba(124,58,237,0.3)'
+        e.currentTarget.style.background = 'rgba(6,182,212,0.06)'
+        e.currentTarget.style.borderColor = 'rgba(6,182,212,0.3)'
       }}
       aria-label="Add more PDF files"
     >
-      <Plus className="w-8 h-8 mb-2" style={{ color: '#7C3AED' }} />
-      <span className="text-xs font-medium" style={{ color: '#7C3AED' }}>Add PDF</span>
+      <Plus className="w-8 h-8 mb-2" style={{ color: '#06B6D4' }} />
+      <span className="text-xs font-medium" style={{ color: '#06B6D4' }}>Add PDF</span>
     </button>
   )
 }
@@ -139,8 +139,8 @@ function EmptyDropZone({
       className="flex flex-col items-center justify-center gap-4 rounded-2xl cursor-pointer transition-all duration-200"
       style={{
         minHeight: '360px',
-        background: over ? 'rgba(124,58,237,0.08)' : 'rgba(255,255,255,0.02)',
-        border: `2px dashed ${over ? 'rgba(124,58,237,0.6)' : 'rgba(255,255,255,0.10)'}`,
+        background: over ? 'rgba(6,182,212,0.08)' : 'rgba(255,255,255,0.02)',
+        border: `2px dashed ${over ? 'rgba(6,182,212,0.6)' : 'rgba(255,255,255,0.10)'}`,
       }}
       onDragOver={e => { e.preventDefault(); setOver(true) }}
       onDragLeave={() => setOver(false)}
@@ -154,9 +154,9 @@ function EmptyDropZone({
     >
       <div
         className="w-16 h-16 rounded-2xl flex items-center justify-center"
-        style={{ background: over ? 'rgba(124,58,237,0.2)' : 'rgba(255,255,255,0.04)' }}
+        style={{ background: over ? 'rgba(6,182,212,0.2)' : 'rgba(255,255,255,0.04)' }}
       >
-        <GitMerge className="w-8 h-8" style={{ color: over ? '#A78BFA' : '#475569' }} />
+        <GitMerge className="w-8 h-8" style={{ color: over ? '#22D3EE' : '#475569' }} />
       </div>
       <div className="text-center">
         <p className="font-medium mb-1" style={{ color: '#E2E8F0' }}>
@@ -269,9 +269,9 @@ export function MergePdfTool({ tool }: MergePdfToolProps) {
       {/* Tip */}
       <div
         className="flex gap-2.5 p-3 rounded-lg text-xs leading-relaxed"
-        style={{ background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.15)' }}
+        style={{ background: 'rgba(6,182,212,0.08)', border: '1px solid rgba(6,182,212,0.15)' }}
       >
-        <Info className="w-4 h-4 shrink-0 mt-0.5" style={{ color: '#A78BFA' }} />
+        <Info className="w-4 h-4 shrink-0 mt-0.5" style={{ color: '#22D3EE' }} />
         <span style={{ color: '#94A3B8' }}>
           {files.length > 0
             ? 'Drag and drop the PDF cards to set the merge order.'
@@ -308,7 +308,7 @@ export function MergePdfTool({ tool }: MergePdfToolProps) {
       {status === 'processing' && (
         <div className="space-y-3">
           <div className="flex items-center gap-3 text-sm" style={{ color: '#94A3B8' }}>
-            <div className="w-4 h-4 border-2 border-violet-500/30 border-t-violet-500 rounded-full animate-spin shrink-0" />
+            <div className="w-4 h-4 border-2 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin shrink-0" />
             Merging {files.length} PDFs…
           </div>
           <button
@@ -330,9 +330,9 @@ export function MergePdfTool({ tool }: MergePdfToolProps) {
       disabled={files.length < 2 || status === 'processing'}
       className="w-full flex items-center justify-between px-5 py-4 rounded-xl font-semibold text-sm transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
       style={{
-        background: files.length >= 2 ? 'linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%)' : 'rgba(255,255,255,0.05)',
+        background: files.length >= 2 ? 'linear-gradient(135deg, #06B6D4 0%, #0891B2 100%)' : 'rgba(255,255,255,0.05)',
         color: '#ffffff',
-        boxShadow: files.length >= 2 ? '0 4px 20px rgba(124,58,237,0.35)' : 'none',
+        boxShadow: files.length >= 2 ? '0 4px 20px rgba(6,182,212,0.35)' : 'none',
       }}
     >
       <span>Merge PDF</span>
@@ -349,7 +349,7 @@ export function MergePdfTool({ tool }: MergePdfToolProps) {
       {files.length > 0 && (
         <span
           className="w-7 h-7 rounded-full text-xs font-bold flex items-center justify-center"
-          style={{ background: '#7C3AED', color: '#fff' }}
+          style={{ background: '#06B6D4', color: '#fff' }}
         >
           {files.length}
         </span>

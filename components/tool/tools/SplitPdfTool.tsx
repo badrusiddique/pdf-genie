@@ -101,8 +101,8 @@ export function SplitPdfTool({ tool }: SplitPdfToolProps) {
             onClick={() => setMode(id)}
             className="flex flex-col items-center gap-1.5 py-3 text-xs font-medium transition-all duration-150"
             style={{
-              background: mode === id ? 'rgba(124,58,237,0.2)' : 'transparent',
-              color: mode === id ? '#A78BFA' : '#64748B',
+              background: mode === id ? 'rgba(6,182,212,0.2)' : 'transparent',
+              color: mode === id ? '#22D3EE' : '#64748B',
               borderRight: id !== 'chunks' ? '1px solid rgba(255,255,255,0.06)' : 'none',
             }}
           >
@@ -165,8 +165,8 @@ export function SplitPdfTool({ tool }: SplitPdfToolProps) {
             onClick={addRange}
             className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-xs font-medium transition-colors"
             style={{
-              border: '1px dashed rgba(124,58,237,0.4)',
-              color: '#A78BFA',
+              border: '1px dashed rgba(6,182,212,0.4)',
+              color: '#22D3EE',
               background: 'transparent',
             }}
           >
@@ -180,7 +180,7 @@ export function SplitPdfTool({ tool }: SplitPdfToolProps) {
               checked={mergeRanges}
               onChange={e => setMergeRanges(e.target.checked)}
               className="w-4 h-4 rounded"
-              style={{ accentColor: '#7C3AED' }}
+              style={{ accentColor: '#06B6D4' }}
             />
             <span className="text-xs" style={{ color: '#94A3B8' }}>Merge all ranges in one PDF file.</span>
           </label>
@@ -225,7 +225,7 @@ export function SplitPdfTool({ tool }: SplitPdfToolProps) {
       {/* Processing */}
       {status === 'processing' && (
         <div className="flex items-center gap-3 text-sm" style={{ color: '#94A3B8' }}>
-          <div className="w-4 h-4 border-2 border-violet-500/30 border-t-violet-500 rounded-full animate-spin shrink-0" />
+          <div className="w-4 h-4 border-2 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin shrink-0" />
           Splitting PDF…
         </div>
       )}
@@ -238,9 +238,9 @@ export function SplitPdfTool({ tool }: SplitPdfToolProps) {
       disabled={!file || status === 'processing'}
       className="w-full flex items-center justify-between px-5 py-4 rounded-xl font-semibold text-sm transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
       style={{
-        background: file ? 'linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%)' : 'rgba(255,255,255,0.05)',
+        background: file ? 'linear-gradient(135deg, #06B6D4 0%, #0891B2 100%)' : 'rgba(255,255,255,0.05)',
         color: '#ffffff',
-        boxShadow: file ? '0 4px 20px rgba(124,58,237,0.35)' : 'none',
+        boxShadow: file ? '0 4px 20px rgba(6,182,212,0.35)' : 'none',
       }}
     >
       <span>Split PDF</span>
@@ -265,8 +265,8 @@ export function SplitPdfTool({ tool }: SplitPdfToolProps) {
           className="flex flex-col items-center justify-center gap-4 rounded-2xl cursor-pointer transition-all duration-200"
           style={{
             minHeight: '360px',
-            background: over ? 'rgba(124,58,237,0.08)' : 'rgba(255,255,255,0.02)',
-            border: `2px dashed ${over ? 'rgba(124,58,237,0.6)' : 'rgba(255,255,255,0.10)'}`,
+            background: over ? 'rgba(6,182,212,0.08)' : 'rgba(255,255,255,0.02)',
+            border: `2px dashed ${over ? 'rgba(6,182,212,0.6)' : 'rgba(255,255,255,0.10)'}`,
           }}
           onDragOver={e => { e.preventDefault(); setOver(true) }}
           onDragLeave={() => setOver(false)}
@@ -289,9 +289,9 @@ export function SplitPdfTool({ tool }: SplitPdfToolProps) {
         >
           <div
             className="w-16 h-16 rounded-2xl flex items-center justify-center"
-            style={{ background: over ? 'rgba(124,58,237,0.2)' : 'rgba(255,255,255,0.04)' }}
+            style={{ background: over ? 'rgba(6,182,212,0.2)' : 'rgba(255,255,255,0.04)' }}
           >
-            <LayoutGrid className="w-8 h-8" style={{ color: over ? '#A78BFA' : '#475569' }} />
+            <LayoutGrid className="w-8 h-8" style={{ color: over ? '#22D3EE' : '#475569' }} />
           </div>
           <div className="text-center">
             <p className="font-medium mb-1" style={{ color: '#E2E8F0' }}>

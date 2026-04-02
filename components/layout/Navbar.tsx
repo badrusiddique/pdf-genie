@@ -15,7 +15,7 @@ export function Navbar() {
     <header
       className="fixed top-0 left-0 right-0 z-50"
       style={{
-        background: 'rgba(19,17,31,0.85)',
+        background: 'rgba(2,11,16,0.85)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         borderBottom: '1px solid rgba(255,255,255,0.06)',
@@ -78,12 +78,12 @@ export function Navbar() {
               <div
                 className="absolute top-full left-0 mt-2 w-[760px]"
                 style={{
-                  background: 'rgba(26,24,48,0.95)',
+                  background: 'rgba(7,21,37,0.95)',
                   backdropFilter: 'blur(20px)',
                   WebkitBackdropFilter: 'blur(20px)',
-                  border: '1px solid rgba(124,58,237,0.2)',
+                  border: '1px solid rgba(6,182,212,0.2)',
                   borderRadius: '16px',
-                  boxShadow: '0 25px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(124,58,237,0.1)',
+                  boxShadow: '0 25px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(6,182,212,0.1)',
                   padding: '24px',
                   display: 'grid',
                   gridTemplateColumns: 'repeat(4, 1fr)',
@@ -97,7 +97,7 @@ export function Navbar() {
                   const categoryTools = getToolsByCategory(category).slice(0, 5)
                   return (
                     <div key={category}>
-                      <p style={{ color: '#7C3AED', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '10px' }}>
+                      <p style={{ color: '#06B6D4', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '10px' }}>
                         {CATEGORY_LABELS[category]}
                       </p>
                       <ul className="space-y-1">
@@ -155,17 +155,17 @@ export function Navbar() {
           rel="noopener noreferrer"
           className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium transition-all duration-200"
           style={{
-            background: 'rgba(124,58,237,0.15)',
-            border: '1px solid rgba(124,58,237,0.3)',
-            color: '#A78BFA',
+            background: 'rgba(6,182,212,0.15)',
+            border: '1px solid rgba(6,182,212,0.3)',
+            color: '#22D3EE',
           }}
           onMouseEnter={e => {
-            e.currentTarget.style.background = 'rgba(124,58,237,0.25)'
-            e.currentTarget.style.borderColor = 'rgba(124,58,237,0.5)'
+            e.currentTarget.style.background = 'rgba(6,182,212,0.25)'
+            e.currentTarget.style.borderColor = 'rgba(6,182,212,0.5)'
           }}
           onMouseLeave={e => {
-            e.currentTarget.style.background = 'rgba(124,58,237,0.15)'
-            e.currentTarget.style.borderColor = 'rgba(124,58,237,0.3)'
+            e.currentTarget.style.background = 'rgba(6,182,212,0.15)'
+            e.currentTarget.style.borderColor = 'rgba(6,182,212,0.3)'
           }}
         >
           ★ Star on GitHub
@@ -188,7 +188,7 @@ export function Navbar() {
         <div
           className="md:hidden max-h-[80vh] overflow-y-auto"
           style={{
-            background: 'rgba(19,17,31,0.98)',
+            background: 'rgba(2,11,16,0.98)',
             borderTop: '1px solid rgba(255,255,255,0.06)',
           }}
         >
@@ -196,7 +196,7 @@ export function Navbar() {
             const categoryTools = getToolsByCategory(category)
             return (
               <div key={category} className="px-4 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#7C3AED', letterSpacing: '0.12em' }}>
+                <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#06B6D4', letterSpacing: '0.12em' }}>
                   {CATEGORY_LABELS[category]}
                 </p>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-2">

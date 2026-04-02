@@ -19,7 +19,7 @@ const categoryGradient: Record<ToolCategory, string> = {
   optimize: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
   'convert-to': 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
   'convert-from': 'linear-gradient(135deg, #F97316 0%, #EA580C 100%)',
-  edit: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
+  edit: 'linear-gradient(135deg, #8B5CF6 0%, #06B6D4 100%)',
   security: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
   intelligence: 'linear-gradient(135deg, #EC4899 0%, #DB2777 100%)',
 }
@@ -54,9 +54,9 @@ function ToolCard({ tool, index }: { tool: Tool; index: number }) {
         }}
         onMouseEnter={e => {
           e.currentTarget.style.background = 'rgba(255,255,255,0.07)'
-          e.currentTarget.style.borderColor = 'rgba(124,58,237,0.35)'
+          e.currentTarget.style.borderColor = 'rgba(6,182,212,0.35)'
           e.currentTarget.style.transform = 'translateY(-3px)'
-          e.currentTarget.style.boxShadow = '0 12px 30px rgba(0,0,0,0.3), 0 0 0 1px rgba(124,58,237,0.1)'
+          e.currentTarget.style.boxShadow = '0 12px 30px rgba(0,0,0,0.3), 0 0 0 1px rgba(6,182,212,0.1)'
         }}
         onMouseLeave={e => {
           e.currentTarget.style.background = 'rgba(255,255,255,0.07)'
@@ -117,9 +117,9 @@ export function ToolGrid({ tools }: ToolGridProps) {
           onClick={() => setActiveCategory('all')}
           className="px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-200"
           style={activeCategory === 'all' ? {
-            background: 'linear-gradient(135deg, #7C3AED, #6D28D9)',
+            background: 'linear-gradient(135deg, #06B6D4, #0891B2)',
             color: '#ffffff',
-            boxShadow: '0 4px 12px rgba(124,58,237,0.4)',
+            boxShadow: '0 4px 12px rgba(6,182,212,0.4)',
           } : {
             color: '#64748B',
             background: 'transparent',
@@ -135,9 +135,9 @@ export function ToolGrid({ tools }: ToolGridProps) {
             onClick={() => setActiveCategory(cat)}
             className="px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-200 whitespace-nowrap"
             style={activeCategory === cat ? {
-              background: 'linear-gradient(135deg, #7C3AED, #6D28D9)',
+              background: 'linear-gradient(135deg, #06B6D4, #0891B2)',
               color: '#ffffff',
-              boxShadow: '0 4px 12px rgba(124,58,237,0.4)',
+              boxShadow: '0 4px 12px rgba(6,182,212,0.4)',
             } : {
               color: '#64748B',
               background: 'transparent',

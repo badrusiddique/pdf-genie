@@ -33,7 +33,7 @@ export function StarField() {
             width: `${star.size}px`,
             height: `${star.size}px`,
             background:
-              star.id % 3 === 0 ? '#F59E0B' : star.id % 3 === 1 ? '#A78BFA' : '#ffffff',
+              star.id % 3 === 0 ? '#F59E0B' : star.id % 3 === 1 ? '#22D3EE' : '#ffffff',
             opacity: 0,
             animation: `twinkle ${star.duration}s ease-in-out ${star.delay}s infinite`,
           }}

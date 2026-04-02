@@ -19,7 +19,7 @@ export function ToolWorkspace({
         <div
           className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-5 rounded-2xl"
           style={{
-            background: 'rgba(19,17,31,0.85)',
+            background: 'rgba(2,11,16,0.85)',
             backdropFilter: 'blur(6px)',
             WebkitBackdropFilter: 'blur(6px)',
           }}
@@ -32,13 +32,13 @@ export function ToolWorkspace({
               className="absolute inset-0 rounded-full animate-spin"
               style={{
                 border: '3px solid transparent',
-                borderTopColor: '#7C3AED',
-                borderRightColor: 'rgba(124,58,237,0.3)',
+                borderTopColor: '#06B6D4',
+                borderRightColor: 'rgba(6,182,212,0.3)',
               }}
             />
             <div
               className="absolute inset-2 rounded-full animate-pulse"
-              style={{ background: 'rgba(124,58,237,0.15)' }}
+              style={{ background: 'rgba(6,182,212,0.15)' }}
             />
           </div>
 
@@ -59,7 +59,7 @@ export function ToolWorkspace({
                 key={i}
                 className="w-1.5 h-1.5 rounded-full"
                 style={{
-                  background: '#7C3AED',
+                  background: '#06B6D4',
                   animation: `pulseGlow 1.2s ease-in-out ${i * 0.2}s infinite`,
                 }}
               />

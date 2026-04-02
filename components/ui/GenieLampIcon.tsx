@@ -14,8 +14,8 @@ export function GenieLampIcon({ className, animated = false }: GenieLampIconProp
     >
       <defs>
         <radialGradient id="lampGrad" cx="50%" cy="60%" r="50%">
-          <stop offset="0%" stopColor="#A78BFA" />
-          <stop offset="100%" stopColor="#7C3AED" />
+          <stop offset="0%" stopColor="#22D3EE" />
+          <stop offset="100%" stopColor="#06B6D4" />
         </radialGradient>
         <radialGradient id="flameGrad" cx="50%" cy="80%" r="50%">
           <stop offset="0%" stopColor="#FCD34D" />
@@ -44,7 +44,7 @@ export function GenieLampIcon({ className, animated = false }: GenieLampIconProp
       {/* Lamp spout */}
       <path
         d="M30 26 C34 24 36 22 35 20 C34 18 31 20 30 23"
-        stroke="#A78BFA"
+        stroke="#22D3EE"
         strokeWidth="2"
         strokeLinecap="round"
         fill="none"
@@ -53,17 +53,17 @@ export function GenieLampIcon({ className, animated = false }: GenieLampIconProp
       {/* Lamp handle */}
       <path
         d="M8 26 C4 24 3 22 5 20 C7 18 9 20 8 23"
-        stroke="#A78BFA"
+        stroke="#22D3EE"
         strokeWidth="2"
         strokeLinecap="round"
         fill="none"
       />
 
       {/* Base */}
-      <rect x="9" y="32" width="22" height="3" rx="1.5" fill="#6D28D9" />
+      <rect x="9" y="32" width="22" height="3" rx="1.5" fill="#0891B2" />
 
       {/* Flame stem */}
-      <rect x="19" y="12" width="2" height="4" rx="1" fill="#C4B5FD" />
+      <rect x="19" y="12" width="2" height="4" rx="1" fill="#A5F3FC" />
 
       {/* Flame */}
       <ellipse
@@ -79,7 +79,7 @@ export function GenieLampIcon({ className, animated = false }: GenieLampIconProp
 
       {/* Magic sparkles */}
       <circle cx="12" cy="8" r="1" fill="#F59E0B" opacity="0.7" className={animated ? 'animate-star-twinkle' : ''} />
-      <circle cx="28" cy="6" r="1.2" fill="#A78BFA" opacity="0.8" className={animated ? 'animate-star-twinkle' : ''} style={{ animationDelay: '1s' }} />
+      <circle cx="28" cy="6" r="1.2" fill="#22D3EE" opacity="0.8" className={animated ? 'animate-star-twinkle' : ''} style={{ animationDelay: '1s' }} />
       <circle cx="33" cy="12" r="0.8" fill="#EC4899" opacity="0.6" className={animated ? 'animate-star-twinkle' : ''} style={{ animationDelay: '2s' }} />
     </svg>
   )
