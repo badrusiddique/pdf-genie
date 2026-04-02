@@ -15,7 +15,7 @@ export function Navbar() {
     <header
       className="fixed top-0 left-0 right-0 z-50"
       style={{
-        background: 'rgba(6,11,24,0.85)',
+        background: 'rgba(19,17,31,0.85)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         borderBottom: '1px solid rgba(255,255,255,0.06)',
@@ -78,7 +78,7 @@ export function Navbar() {
               <div
                 className="absolute top-full left-0 mt-2 w-[760px]"
                 style={{
-                  background: 'rgba(15,23,41,0.95)',
+                  background: 'rgba(26,24,48,0.95)',
                   backdropFilter: 'blur(20px)',
                   WebkitBackdropFilter: 'blur(20px)',
                   border: '1px solid rgba(124,58,237,0.2)',
@@ -188,7 +188,7 @@ export function Navbar() {
         <div
           className="md:hidden max-h-[80vh] overflow-y-auto"
           style={{
-            background: 'rgba(6,11,24,0.98)',
+            background: 'rgba(19,17,31,0.98)',
             borderTop: '1px solid rgba(255,255,255,0.06)',
           }}
         >

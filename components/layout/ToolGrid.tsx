@@ -47,7 +47,7 @@ function ToolCard({ tool, index }: { tool: Tool; index: number }) {
         href={`/${tool.slug}`}
         className="group flex flex-col gap-4 p-5 rounded-2xl h-full transition-all duration-300 focus-visible:outline-none"
         style={{
-          background: 'rgba(255,255,255,0.03)',
+          background: 'rgba(255,255,255,0.07)',
           border: '1px solid rgba(255,255,255,0.07)',
           backdropFilter: 'blur(8px)',
           WebkitBackdropFilter: 'blur(8px)',
@@ -59,7 +59,7 @@ function ToolCard({ tool, index }: { tool: Tool; index: number }) {
           e.currentTarget.style.boxShadow = '0 12px 30px rgba(0,0,0,0.3), 0 0 0 1px rgba(124,58,237,0.1)'
         }}
         onMouseLeave={e => {
-          e.currentTarget.style.background = 'rgba(255,255,255,0.03)'
+          e.currentTarget.style.background = 'rgba(255,255,255,0.07)'
           e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'
           e.currentTarget.style.transform = 'translateY(0)'
           e.currentTarget.style.boxShadow = 'none'
@@ -109,7 +109,7 @@ export function ToolGrid({ tools }: ToolGridProps) {
         className="flex flex-wrap gap-2 mb-10 p-1 rounded-2xl"
         role="tablist"
         aria-label="Filter by category"
-        style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+        style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.10)' }}
       >
         <button
           role="tab"

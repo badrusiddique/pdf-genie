@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #060B18;
-  --color-bg-2: #0F1729;
-  --color-surface: rgba(255,255,255,0.04);
-  --color-surface-hover: rgba(255,255,255,0.08);
+  --color-bg: #13111F;
+  --color-bg-2: #1A1830;
+  --color-surface: rgba(255,255,255,0.07);
+  --color-surface-hover: rgba(255,255,255,0.12);
   --color-primary: #7C3AED;
   --color-primary-soft: rgba(124,58,237,0.15);
   --color-accent: #F59E0B;
@@ -35,7 +35,7 @@
 
   html {
     font-family: var(--font-ui);
-    background-color: #060B18;
+    background-color: #13111F;
     color: #F1F5F9;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -46,9 +46,10 @@
     min-height: 100vh;
     line-height: 1.6;
     background:
-      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(124,58,237,0.15) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(236,72,153,0.07) 0%, transparent 50%),
-      linear-gradient(180deg, #060B18 0%, #0F1729 50%, #060B18 100%);
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(124,58,237,0.22) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 85% 70%, rgba(236,72,153,0.10) 0%, transparent 50%),
+      radial-gradient(ellipse 40% 30% at 10% 90%, rgba(59,130,246,0.07) 0%, transparent 50%),
+      linear-gradient(180deg, #13111F 0%, #1A1830 50%, #13111F 100%);
     background-attachment: fixed;
   }
 
@@ -80,7 +81,7 @@
     width: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #060B18;
+    background: #13111F;
   }
   ::-webkit-scrollbar-thumb {
     background: rgba(255,255,255,0.1);

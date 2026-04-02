@@ -6,7 +6,7 @@ export function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer style={{ background: 'rgba(6,11,24,0.95)', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+    <footer style={{ background: 'rgba(19,17,31,0.95)', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-14">
           {/* Brand column */}

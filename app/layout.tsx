@@ -44,7 +44,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${fraunces.variable} ${instrumentSans.variable}`}>
-      <body className="min-h-screen" style={{ background: '#060B18', color: '#F1F5F9' }}>
+      <body className="min-h-screen" style={{ background: '#13111F', color: '#F1F5F9' }}>
         <Navbar />
         <div className="pt-14">{children}</div>
         <Footer />
