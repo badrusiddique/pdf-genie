@@ -15,44 +15,43 @@ function ToolIcon({ name, className }: { name: string; className?: string }) {
   return <Icon className={className} />
 }
 
-// Category color accent for icon bg
+// More vivid category accent colors
 const categoryAccent: Record<ToolCategory, string> = {
-  organize: 'bg-blue-50 text-blue-600',
-  optimize: 'bg-green-50 text-green-600',
-  'convert-to': 'bg-amber-50 text-amber-600',
-  'convert-from': 'bg-orange-50 text-orange-600',
-  edit: 'bg-purple-50 text-purple-600',
-  security: 'bg-red-50 text-red-600',
-  intelligence: 'bg-indigo-50 text-indigo-600',
+  organize: 'bg-blue-100 text-blue-700',
+  optimize: 'bg-emerald-100 text-emerald-700',
+  'convert-to': 'bg-amber-100 text-amber-700',
+  'convert-from': 'bg-orange-100 text-orange-700',
+  edit: 'bg-violet-100 text-violet-700',
+  security: 'bg-rose-100 text-rose-700',
+  intelligence: 'bg-indigo-100 text-indigo-700',
 }
 
 function ToolCard({ tool, index }: { tool: Tool; index: number }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.2, delay: index * 0.03 }}
+      exit={{ opacity: 0, scale: 0.96 }}
+      transition={{ duration: 0.18, delay: index * 0.025 }}
       layout
     >
       <Link
         href={`/${tool.slug}`}
-        className={cn(
-          'group flex flex-col gap-3 p-5 bg-[--color-surface] rounded-[--radius-lg]',
-          'border border-[--color-border] hover:border-[--color-primary]/30',
-          'shadow-[--shadow-sm] hover:shadow-[--shadow-md]',
-          'transition-all duration-200 hover:-translate-y-0.5',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--color-accent]',
-        )}
+        className="group flex flex-col gap-4 p-5 bg-white rounded-xl border border-[#E5E0D8] transition-all duration-200 hover:border-[#1B3A6B]/20 hover:shadow-lg hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B] focus-visible:ring-offset-2"
+        style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
       >
-        <div className={cn('w-10 h-10 rounded-[--radius] flex items-center justify-center shrink-0', categoryAccent[tool.category])}>
-          <ToolIcon name={tool.icon} className="w-5 h-5" />
+        {/* Icon container - larger and more vivid */}
+        <div className={cn(
+          'w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-110',
+          categoryAccent[tool.category]
+        )}>
+          <ToolIcon name={tool.icon} className="w-6 h-6" />
         </div>
-        <div>
-          <h3 className="font-semibold text-sm text-[--color-text] group-hover:text-[--color-primary] transition-colors leading-tight mb-1">
+        <div className="min-w-0">
+          <h3 className="font-semibold text-sm text-[#1A1A1A] group-hover:text-[#1B3A6B] transition-colors leading-snug mb-1.5">
             {tool.name}
           </h3>
-          <p className="text-xs text-[--color-muted] leading-relaxed line-clamp-2">{tool.description}</p>
+          <p className="text-xs text-[#6B7280] leading-relaxed line-clamp-2">{tool.description}</p>
         </div>
       </Link>
     </motion.div>
@@ -73,20 +72,22 @@ export function ToolGrid({ tools }: ToolGridProps) {
   return (
     <section aria-label="PDF tools">
       {/* Category filter tabs */}
-      <div className="flex flex-wrap gap-2 mb-8" role="tablist" aria-label="Filter by category">
+      <div className="flex flex-wrap gap-2 mb-10" role="tablist" aria-label="Filter by category">
+        {/* All button */}
         <button
           role="tab"
           aria-selected={activeCategory === 'all'}
           onClick={() => setActiveCategory('all')}
           className={cn(
-            'px-4 py-1.5 text-sm font-medium rounded-full border transition-all',
+            'px-4 py-2 text-sm font-medium rounded-full border transition-all duration-150',
             activeCategory === 'all'
-              ? 'bg-[--color-primary] text-white border-[--color-primary]'
-              : 'bg-[--color-surface] text-[--color-muted] border-[--color-border] hover:border-[--color-primary]/40 hover:text-[--color-text]',
+              ? 'bg-[#1B3A6B] text-white border-[#1B3A6B] shadow-sm'
+              : 'bg-white text-[#6B7280] border-[#E5E0D8] hover:border-[#1B3A6B]/40 hover:text-[#1A1A1A]',
           )}
         >
           All
         </button>
+        {/* Category buttons */}
         {CATEGORIES.map(cat => (
           <button
             key={cat}
@@ -94,10 +95,10 @@ export function ToolGrid({ tools }: ToolGridProps) {
             aria-selected={activeCategory === cat}
             onClick={() => setActiveCategory(cat)}
             className={cn(
-              'px-4 py-1.5 text-sm font-medium rounded-full border transition-all',
+              'px-4 py-2 text-sm font-medium rounded-full border transition-all duration-150 whitespace-nowrap',
               activeCategory === cat
-                ? 'bg-[--color-primary] text-white border-[--color-primary]'
-                : 'bg-[--color-surface] text-[--color-muted] border-[--color-border] hover:border-[--color-primary]/40 hover:text-[--color-text]',
+                ? 'bg-[#1B3A6B] text-white border-[#1B3A6B] shadow-sm'
+                : 'bg-white text-[#6B7280] border-[#E5E0D8] hover:border-[#1B3A6B]/40 hover:text-[#1A1A1A]',
             )}
           >
             {CATEGORY_LABELS[cat]}
@@ -105,10 +106,10 @@ export function ToolGrid({ tools }: ToolGridProps) {
         ))}
       </div>
 
-      {/* Tool cards grid */}
+      {/* Tool cards grid — 5 columns max for breathing room */}
       <motion.div
         layout
-        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3"
+        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
       >
         <AnimatePresence mode="popLayout">
           {filtered.map((tool, i) => (
@@ -116,11 +117,6 @@ export function ToolGrid({ tools }: ToolGridProps) {
           ))}
         </AnimatePresence>
       </motion.div>
-
-      <p className="mt-4 text-xs text-[--color-muted] text-right">
-        {filtered.length} tool{filtered.length !== 1 ? 's' : ''}
-        {activeCategory !== 'all' && ` in ${CATEGORY_LABELS[activeCategory]}`}
-      </p>
     </section>
   )
 }
