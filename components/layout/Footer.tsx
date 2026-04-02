@@ -42,10 +42,8 @@ export function Footer() {
                   <li key={tool.slug}>
                     <Link
                       href={`/${tool.slug}`}
-                      className="text-xs transition-colors duration-150"
+                      className="text-xs transition-colors duration-150 hover:text-[#94A3B8]"
                       style={{ color: '#475569' }}
-                      onMouseEnter={e => (e.currentTarget.style.color = '#94A3B8')}
-                      onMouseLeave={e => (e.currentTarget.style.color = '#475569')}
                     >
                       {tool.name}
                     </Link>
@@ -62,7 +60,7 @@ export function Footer() {
             © {year} PDF Genie. Open source under the MIT License.
           </p>
           <div className="flex items-center gap-6 text-xs" style={{ color: '#334155' }}>
-            <a href="https://github.com/badrusiddique/pdf-genie" target="_blank" rel="noopener noreferrer" className="transition-colors" onMouseEnter={e => (e.currentTarget.style.color = '#94A3B8')} onMouseLeave={e => (e.currentTarget.style.color = '#334155')}>GitHub</a>
+            <a href="https://github.com/badrusiddique/pdf-genie" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-[#94A3B8]">GitHub</a>
           </div>
         </div>
       </div>

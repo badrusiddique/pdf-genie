@@ -2,6 +2,8 @@ import { Metadata } from 'next'
 import { tools } from '@/config/tools'
 import { ToolGrid } from '@/components/layout/ToolGrid'
 import { GenieLampIcon } from '@/components/ui/GenieLampIcon'
+import { StarField } from '@/components/layout/StarField'
+import { HeroCTA } from '@/components/layout/HeroCTA'
 
 export const metadata: Metadata = {
   title: 'PDF Genie - Every PDF tool, beautifully simple',
@@ -10,38 +12,6 @@ export const metadata: Metadata = {
     title: 'PDF Genie - Every PDF tool, beautifully simple',
     description: 'Free online PDF tools. No signup required.',
   },
-}
-
-// Floating star particles (CSS animated, no JS library)
-function StarField() {
-  const stars = Array.from({ length: 30 }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 60,
-    size: Math.random() * 2 + 0.5,
-    delay: Math.random() * 4,
-    duration: Math.random() * 3 + 2,
-  }))
-
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
-      {stars.map(star => (
-        <div
-          key={star.id}
-          className="absolute rounded-full"
-          style={{
-            left: `${star.x}%`,
-            top: `${star.y}%`,
-            width: `${star.size}px`,
-            height: `${star.size}px`,
-            background: star.id % 3 === 0 ? '#F59E0B' : star.id % 3 === 1 ? '#A78BFA' : '#ffffff',
-            opacity: 0,
-            animation: `twinkle ${star.duration}s ease-in-out ${star.delay}s infinite`,
-          }}
-        />
-      ))}
-    </div>
-  )
 }
 
 export default function HomePage() {
@@ -91,37 +61,8 @@ export default function HomePage() {
           Browser-based when possible - your files stay private.
         </p>
 
-        {/* CTA row */}
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          <a
-            href="#tools"
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-sm transition-all duration-200"
-            style={{
-              background: 'linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%)',
-              color: '#ffffff',
-              boxShadow: '0 0 30px rgba(124,58,237,0.4), 0 4px 15px rgba(0,0,0,0.3)',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 0 40px rgba(124,58,237,0.5), 0 8px 20px rgba(0,0,0,0.3)' }}
-            onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 30px rgba(124,58,237,0.4), 0 4px 15px rgba(0,0,0,0.3)' }}
-          >
-            ✦ Explore all tools
-          </a>
-          <a
-            href="https://github.com/badrusiddique/pdf-genie"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-medium transition-all duration-200"
-            style={{
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              color: '#94A3B8',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = '#F1F5F9' }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = '#94A3B8' }}
-          >
-            ★ View on GitHub
-          </a>
-        </div>
+        {/* CTA row — client component (needs hover handlers) */}
+        <HeroCTA />
       </section>
 
       {/* Tool grid section */}
