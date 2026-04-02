@@ -54,7 +54,11 @@ export function Navbar() {
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-1 flex-1">
           {/* All Tools mega-menu */}
-          <div className="relative">
+          <div
+            className="relative"
+            onMouseEnter={() => setMegaOpen(true)}
+            onMouseLeave={() => setMegaOpen(false)}
+          >
             <button
               className={cn(
                 'flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200',
@@ -62,8 +66,6 @@ export function Navbar() {
                 megaOpen && 'text-[#F1F5F9] bg-white/5',
               )}
               style={{ fontSize: '13px' }}
-              onMouseEnter={() => setMegaOpen(true)}
-              onMouseLeave={() => setMegaOpen(false)}
               onClick={() => setMegaOpen(v => !v)}
               aria-expanded={megaOpen}
               aria-haspopup="true"
@@ -73,10 +75,13 @@ export function Navbar() {
               <ChevronDown className={cn('w-3.5 h-3.5 transition-transform duration-200', megaOpen && 'rotate-180')} />
             </button>
 
-            {/* Mega-menu */}
+            {/* Mega-menu — pt-2 instead of mt-2 keeps hover area continuous with the button */}
             {megaOpen && (
               <div
-                className="absolute top-full left-0 mt-2 w-[760px]"
+                className="absolute top-full left-0 pt-2 w-[760px]"
+                role="menu"
+              >
+              <div
                 style={{
                   background: 'rgba(7,21,37,0.95)',
                   backdropFilter: 'blur(20px)',
@@ -89,9 +94,6 @@ export function Navbar() {
                   gridTemplateColumns: 'repeat(4, 1fr)',
                   gap: '20px',
                 }}
-                onMouseEnter={() => setMegaOpen(true)}
-                onMouseLeave={() => setMegaOpen(false)}
-                role="menu"
               >
                 {CATEGORIES.map(category => {
                   const categoryTools = getToolsByCategory(category).slice(0, 5)
@@ -120,6 +122,7 @@ export function Navbar() {
                     </div>
                   )
                 })}
+              </div>
               </div>
             )}
           </div>
