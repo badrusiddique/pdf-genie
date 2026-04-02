@@ -126,7 +126,7 @@ export function Navbar() {
 
           {/* Quick links */}
           {['merge-pdf', 'split-pdf', 'compress-pdf'].map(slug => {
-            const label = slug.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')
+            const label = slug.split('-').map(w => w.toLowerCase() === 'pdf' ? 'PDF' : w[0].toUpperCase() + w.slice(1)).join(' ')
             return (
               <Link
                 key={slug}
