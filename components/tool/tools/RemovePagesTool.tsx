@@ -1,0 +1,97 @@
+'use client'
+
+import { useState, useCallback } from 'react'
+import { ToolDropzone, ToolResult, type UploadedFile } from '@/components/tool'
+import { Button } from '@/components/ui'
+import type { Tool } from '@/config/tools'
+
+interface RemovePagesToolProps { tool: Tool }
+
+export function RemovePagesTool({ tool }: RemovePagesToolProps) {
+  const [files, setFiles] = useState<UploadedFile[]>([])
+  const [pageInput, setPageInput] = useState('')
+  const [status, setStatus] = useState<'idle' | 'processing' | 'done' | 'error'>('idle')
+  const [downloadUrl, setDownloadUrl] = useState('')
+  const [error, setError] = useState('')
+
+  const handleRemove = useCallback(async () => {
+    if (!files[0] || !pageInput.trim()) return
+    setStatus('processing')
+    setError('')
+
+    try {
+      const pageNumbers = pageInput
+        .split(',')
+        .map(s => parseInt(s.trim(), 10))
+        .filter(n => !isNaN(n) && n > 0)
+
+      if (pageNumbers.length === 0) {
+        setError('Enter at least one valid page number')
+        setStatus('error')
+        return
+      }
+
+      const { removePagesFromPdf } = await import('@/lib/pdf/removePages')
+      const pdfBytes = new Uint8Array(await files[0].file.arrayBuffer())
+      const result = await removePagesFromPdf(pdfBytes, pageNumbers)
+
+      const blob = new Blob([result.buffer as ArrayBuffer], { type: 'application/pdf' })
+      setDownloadUrl(URL.createObjectURL(blob))
+      setStatus('done')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to remove pages')
+      setStatus('error')
+    }
+  }, [files, pageInput])
+
+  const handleReset = useCallback(() => {
+    if (downloadUrl) URL.revokeObjectURL(downloadUrl)
+    setFiles([])
+    setPageInput('')
+    setDownloadUrl('')
+    setStatus('idle')
+    setError('')
+  }, [downloadUrl])
+
+  if (status === 'done') {
+    const baseName = files[0]?.file.name.replace(/\.pdf$/i, '') ?? 'document'
+    return <ToolResult downloadUrl={downloadUrl} fileName={`${baseName}-removed.pdf`} onReset={handleReset} />
+  }
+
+  return (
+    <div className="space-y-6">
+      <ToolDropzone tool={tool} files={files} onFilesChange={setFiles} disabled={status === 'processing'} />
+
+      {files.length > 0 && (
+        <>
+          <div className="space-y-1">
+            <label htmlFor="pages-to-remove" className="text-sm font-medium text-[--color-text]">
+              Pages to remove
+            </label>
+            <input
+              id="pages-to-remove"
+              type="text"
+              value={pageInput}
+              onChange={e => setPageInput(e.target.value)}
+              placeholder="e.g. 2, 4, 7"
+              className="w-full px-3 py-2 text-sm rounded-[--radius] border border-[--color-border] bg-[--color-surface] text-[--color-text] focus:outline-none focus:ring-2 focus:ring-[--color-primary]/30"
+            />
+            <p className="text-xs text-[--color-muted]">Enter page numbers separated by commas (1-indexed)</p>
+          </div>
+
+          {error && <p role="alert" className="text-sm text-[--color-error]">{error}</p>}
+
+          <Button
+            onClick={handleRemove}
+            disabled={status === 'processing' || !pageInput.trim()}
+            loading={status === 'processing'}
+            size="lg"
+            className="w-full"
+          >
+            {status === 'processing' ? 'Removing pages…' : 'Remove Pages'}
+          </Button>
+        </>
+      )}
+    </div>
+  )
+}
