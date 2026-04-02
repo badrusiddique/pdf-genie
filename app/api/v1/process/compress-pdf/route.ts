@@ -30,15 +30,28 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  const result = await compressPdf(bytes, level as CompressionLevel)
+  const VALID_LEVELS = ['extreme', 'recommended', 'less'] as const
+  const safeLevel: CompressionLevel = (VALID_LEVELS as readonly string[]).includes(level)
+    ? (level as CompressionLevel)
+    : 'recommended'
 
-  const filename = `${file.name.replace(/\.pdf$/i, '')}_compressed.pdf`
-  return new NextResponse(Buffer.from(result.compressed), {
-    headers: {
-      'Content-Type': 'application/pdf',
-      'Content-Disposition': `attachment; filename="${filename}"`,
-      'X-Original-Size': String(result.originalSize),
-      'X-Compressed-Size': String(result.compressedSize),
-    },
-  })
+  try {
+    const result = await compressPdf(bytes, safeLevel)
+
+    const safeName = file.name.replace(/[^\w\-. ]/g, '_').replace(/\.pdf$/i, '')
+    const filename = `${safeName}_compressed.pdf`
+    return new NextResponse(Buffer.from(result.compressed), {
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'X-Original-Size': String(result.originalSize),
+        'X-Compressed-Size': String(result.compressedSize),
+      },
+    })
+  } catch (err) {
+    return NextResponse.json(
+      { success: false, error: { code: 'COMPRESS_FAILED', message: err instanceof Error ? err.message : 'Failed to compress PDF' } },
+      { status: 422 },
+    )
+  }
 }

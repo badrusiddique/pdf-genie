@@ -50,7 +50,10 @@ export async function imagesToPdf(
     const page = doc.addPage([w, h])
     const drawW = w - marginPx * 2
     const drawH = h - marginPx * 2
-    const scaled = image.scaleToFit(drawW, drawH)
+    if (pageSize === 'fit' && (drawW <= 0 || drawH <= 0)) {
+      throw new Error(`Image is too small (${w}×${h}px) for the selected margin`)
+    }
+    const scaled = image.scaleToFit(Math.max(1, drawW), Math.max(1, drawH))
     page.drawImage(image, {
       x: marginPx + (drawW - scaled.width) / 2,
       y: marginPx + (drawH - scaled.height) / 2,

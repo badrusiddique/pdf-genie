@@ -8,6 +8,13 @@ describe('splitPdfByRanges', () => {
     await expect(splitPdfByRanges(pdf, [])).rejects.toThrow('At least one range is required')
   })
 
+  it('returns 1 item covering all pages when range spans full document', async () => {
+    const pdf = await createTestPdf(4)
+    const results = await splitPdfByRanges(pdf, [{ from: 1, to: 4 }])
+    expect(results).toHaveLength(1)
+    expect(await getPageCount(results[0])).toBe(4)
+  })
+
   it('returns 1 PDF with 3 pages when given range [1-3] from 5-page PDF', async () => {
     const pdf = await createTestPdf(5)
     const results = await splitPdfByRanges(pdf, [{ from: 1, to: 3 }])
@@ -47,6 +54,13 @@ describe('splitPdfToPages', () => {
     for (const result of results) {
       expect(await getPageCount(result)).toBe(1)
     }
+  })
+
+  it('returns array of 1 element with 1 page from a 1-page PDF', async () => {
+    const pdf = await createTestPdf(1)
+    const results = await splitPdfToPages(pdf)
+    expect(results).toHaveLength(1)
+    expect(await getPageCount(results[0])).toBe(1)
   })
 })
 

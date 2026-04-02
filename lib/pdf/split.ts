@@ -16,6 +16,9 @@ export async function splitPdfByRanges(
   ranges: SplitRange[],
 ): Promise<Uint8Array[]> {
   if (ranges.length === 0) throw new Error('At least one range is required')
+  if (pdfBytes.length < 4 || pdfBytes[0] !== 0x25 || pdfBytes[1] !== 0x50 || pdfBytes[2] !== 0x44 || pdfBytes[3] !== 0x46) {
+    throw new Error('Input is not a valid PDF file')
+  }
   const source = await PDFDocument.load(pdfBytes)
   const totalPages = source.getPageCount()
 
@@ -37,6 +40,9 @@ export async function splitPdfByRanges(
  * Split a PDF into individual pages (one PDF per page).
  */
 export async function splitPdfToPages(pdfBytes: Uint8Array): Promise<Uint8Array[]> {
+  if (pdfBytes.length < 4 || pdfBytes[0] !== 0x25 || pdfBytes[1] !== 0x50 || pdfBytes[2] !== 0x44 || pdfBytes[3] !== 0x46) {
+    throw new Error('Input is not a valid PDF file')
+  }
   const source = await PDFDocument.load(pdfBytes)
   const count = source.getPageCount()
   return splitPdfByRanges(pdfBytes, Array.from({ length: count }, (_, i) => ({ from: i + 1, to: i + 1 })))
@@ -48,6 +54,9 @@ export async function splitPdfToPages(pdfBytes: Uint8Array): Promise<Uint8Array[
 export async function splitPdfIntoChunks(pdfBytes: Uint8Array, chunkSize: number): Promise<Uint8Array[]> {
   if (chunkSize < 1 || !Number.isInteger(chunkSize)) {
     throw new Error('Chunk size must be a positive integer')
+  }
+  if (pdfBytes.length < 4 || pdfBytes[0] !== 0x25 || pdfBytes[1] !== 0x50 || pdfBytes[2] !== 0x44 || pdfBytes[3] !== 0x46) {
+    throw new Error('Input is not a valid PDF file')
   }
   const source = await PDFDocument.load(pdfBytes)
   const total = source.getPageCount()

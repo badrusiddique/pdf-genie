@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { ToolDropzone, ToolResult, type UploadedFile } from '@/components/tool'
 import { Button } from '@/components/ui'
 import type { Tool } from '@/config/tools'
@@ -13,6 +13,12 @@ export function RemovePagesTool({ tool }: RemovePagesToolProps) {
   const [status, setStatus] = useState<'idle' | 'processing' | 'done' | 'error'>('idle')
   const [downloadUrl, setDownloadUrl] = useState('')
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    return () => {
+      if (downloadUrl) URL.revokeObjectURL(downloadUrl)
+    }
+  }, [downloadUrl])
 
   const handleRemove = useCallback(async () => {
     if (!files[0] || !pageInput.trim()) return
@@ -65,7 +71,7 @@ export function RemovePagesTool({ tool }: RemovePagesToolProps) {
       {files.length > 0 && (
         <>
           <div className="space-y-1">
-            <label htmlFor="pages-to-remove" className="text-sm font-medium text-[--color-text]">
+            <label htmlFor="pages-to-remove" className="text-sm font-medium" style={{ color: '#E2E8F0' }}>
               Pages to remove
             </label>
             <input
@@ -74,12 +80,17 @@ export function RemovePagesTool({ tool }: RemovePagesToolProps) {
               value={pageInput}
               onChange={e => setPageInput(e.target.value)}
               placeholder="e.g. 2, 4, 7"
-              className="w-full px-3 py-2 text-sm rounded-[--radius] border border-[--color-border] bg-[--color-surface] text-[--color-text] focus:outline-none focus:ring-2 focus:ring-[--color-primary]/30"
+              className="w-full px-3 py-2 text-sm rounded-lg focus:outline-none focus:ring-2"
+              style={{
+                border: '1px solid rgba(255,255,255,0.10)',
+                background: 'rgba(255,255,255,0.04)',
+                color: '#E2E8F0',
+              }}
             />
-            <p className="text-xs text-[--color-muted]">Enter page numbers separated by commas (1-indexed)</p>
+            <p className="text-xs" style={{ color: '#94A3B8' }}>Enter page numbers separated by commas (1-indexed)</p>
           </div>
 
-          {error && <p role="alert" className="text-sm text-[--color-error]">{error}</p>}
+          {error && <p role="alert" className="text-sm" style={{ color: '#EF4444' }}>{error}</p>}
 
           <Button
             onClick={handleRemove}

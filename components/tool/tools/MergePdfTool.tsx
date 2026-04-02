@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor,
   useSensor, useSensors,
@@ -187,6 +187,12 @@ export function MergePdfTool({ tool }: MergePdfToolProps) {
   const [downloadUrl, setDownloadUrl] = useState('')
   const [error, setError] = useState('')
   const [abortController, setAbortController] = useState<AbortController | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (downloadUrl) URL.revokeObjectURL(downloadUrl)
+    }
+  }, [downloadUrl])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),

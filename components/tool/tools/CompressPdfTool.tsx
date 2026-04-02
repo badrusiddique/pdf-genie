@@ -138,9 +138,11 @@ export function CompressPdfTool({ tool }: CompressPdfToolProps) {
           className="mb-6 p-4 rounded-xl text-center"
           style={{ background: 'rgba(6,182,212,0.08)', border: '1px solid rgba(6,182,212,0.20)' }}
         >
-          <p className="text-sm mb-1" style={{ color: '#94A3B8' }}>File size reduced by</p>
+          <p className="text-sm mb-1" style={{ color: '#94A3B8' }}>
+            {savedPct < 0 ? 'Result' : 'File size reduced by'}
+          </p>
           <p className="font-display text-3xl font-bold" style={{ color: '#22D3EE' }}>
-            {savedPct > 0 ? `${savedPct}%` : '< 1%'}
+            {savedPct > 0 ? `${savedPct}%` : savedPct === 0 ? 'No change' : 'File grew (already optimised)'}
           </p>
           <p className="text-xs mt-1" style={{ color: '#475569' }}>
             {formatFileSize(savings.original)} → {formatFileSize(savings.compressed)}

@@ -106,8 +106,8 @@ export const tools: Tool[] = [
     icon: 'FileDown',
     processingMode: 'server',
     acceptedFormats: ['application/pdf'],
-    multiple: true,
-    maxFiles: 2,
+    multiple: false,
+    maxFiles: 1,
     maxSizeMB: 50,
   },
   {

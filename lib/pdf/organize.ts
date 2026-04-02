@@ -14,6 +14,9 @@ export async function organizePdf(
   operations: PageOperation[],
 ): Promise<Uint8Array> {
   if (operations.length === 0) throw new Error('At least one page operation is required')
+  if (pdfBytes.length < 4 || pdfBytes[0] !== 0x25 || pdfBytes[1] !== 0x50 || pdfBytes[2] !== 0x44 || pdfBytes[3] !== 0x46) {
+    throw new Error('Input is not a valid PDF file')
+  }
   const source = await PDFDocument.load(pdfBytes)
   const total = source.getPageCount()
 

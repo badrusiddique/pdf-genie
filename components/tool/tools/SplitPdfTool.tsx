@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import JSZip from 'jszip'
 import { LayoutGrid, AlignJustify, Gauge, Plus } from 'lucide-react'
 import { ToolLayout, ToolResult, PdfThumbnail, type UploadedFile } from '@/components/tool'
@@ -23,6 +23,12 @@ export function SplitPdfTool({ tool }: SplitPdfToolProps) {
   const [error, setError] = useState('')
   const [over, setOver] = useState(false)
 
+  useEffect(() => {
+    return () => {
+      if (downloadUrl) URL.revokeObjectURL(downloadUrl)
+    }
+  }, [downloadUrl])
+
   const handleSplit = useCallback(async () => {
     if (!file) return
     setStatus('processing')
@@ -44,16 +50,24 @@ export function SplitPdfTool({ tool }: SplitPdfToolProps) {
       }
 
       const baseName = file.file.name.replace(/\.pdf$/i, '')
-      const zip = new JSZip()
-      results.forEach((pdf, i) => zip.file(`${baseName}-part${i + 1}.pdf`, pdf))
-      const blob = await zip.generateAsync({ type: 'blob' })
-      setDownloadUrl(URL.createObjectURL(blob))
+
+      if (mode === 'ranges' && mergeRanges && results.length > 1) {
+        const { mergePdfs } = await import('@/lib/pdf/merge')
+        const merged = await mergePdfs(results)
+        const blob = new Blob([merged.buffer as ArrayBuffer], { type: 'application/pdf' })
+        setDownloadUrl(URL.createObjectURL(blob))
+      } else {
+        const zip = new JSZip()
+        results.forEach((pdf, i) => zip.file(`${baseName}-part${i + 1}.pdf`, pdf))
+        const blob = await zip.generateAsync({ type: 'blob' })
+        setDownloadUrl(URL.createObjectURL(blob))
+      }
       setStatus('done')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Split failed')
       setStatus('error')
     }
-  }, [file, mode, ranges, chunkSize])
+  }, [file, mode, ranges, chunkSize, mergeRanges])
 
   const handleReset = useCallback(() => {
     if (downloadUrl) URL.revokeObjectURL(downloadUrl)
@@ -77,9 +91,12 @@ export function SplitPdfTool({ tool }: SplitPdfToolProps) {
   // ── Done state ──
   if (status === 'done') {
     const baseName = file?.file.name.replace(/\.pdf$/i, '') ?? 'split'
+    const fileName = mode === 'ranges' && mergeRanges
+      ? `${baseName}-merged-ranges.pdf`
+      : `${baseName}-split.zip`
     return (
       <div className="max-w-xl mx-auto px-6 py-12">
-        <ToolResult downloadUrl={downloadUrl} fileName={`${baseName}-split.zip`} onReset={handleReset} />
+        <ToolResult downloadUrl={downloadUrl} fileName={fileName} onReset={handleReset} />
       </div>
     )
   }

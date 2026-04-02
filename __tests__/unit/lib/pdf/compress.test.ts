@@ -42,4 +42,43 @@ describe('compressPdf', () => {
     const result = await compressPdf(pdf)
     expect(result.compressedSize).toBe(result.compressed.length)
   })
+
+  it('throws on structurally corrupt PDF bytes (valid magic, corrupt body)', async () => {
+    // Valid PDF magic bytes but corrupt/truncated body — pdf-lib will throw during parse
+    const corrupt = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x00, 0x01, 0x02, 0x03])
+    await expect(compressPdf(corrupt)).rejects.toThrow()
+  })
+
+  it('strips metadata on recommended level', async () => {
+    const doc = await PDFDocument.create()
+    doc.addPage()
+    doc.setTitle('Test Title')
+    const pdf = await doc.save()
+
+    const result = await compressPdf(pdf, 'recommended')
+    const loaded = await PDFDocument.load(result.compressed)
+    expect(loaded.getTitle()).toBe('')
+  })
+
+  it('strips metadata on extreme level', async () => {
+    const doc = await PDFDocument.create()
+    doc.addPage()
+    doc.setTitle('Extreme Title')
+    const pdf = await doc.save()
+
+    const result = await compressPdf(pdf, 'extreme')
+    const loaded = await PDFDocument.load(result.compressed)
+    expect(loaded.getTitle()).toBe('')
+  })
+
+  it('preserves metadata on less level', async () => {
+    const doc = await PDFDocument.create()
+    doc.addPage()
+    doc.setTitle('Keep This Title')
+    const pdf = await doc.save()
+
+    const result = await compressPdf(pdf, 'less')
+    const loaded = await PDFDocument.load(result.compressed)
+    expect(loaded.getTitle()).toBe('Keep This Title')
+  })
 })

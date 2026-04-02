@@ -39,4 +39,31 @@ describe('imagesToPdf', () => {
     expect(result[2]).toBe(0x44) // D
     expect(result[3]).toBe(0x46) // F
   })
+
+  it('produces valid PDF with pageSize: a4', async () => {
+    const images = [{ bytes: MINIMAL_PNG, mimeType: 'image/png' as const }]
+    const result = await imagesToPdf(images, { pageSize: 'a4' })
+    expect(await getPageCount(result)).toBe(1)
+  })
+
+  it('produces valid PDF with orientation: landscape', async () => {
+    const images = [{ bytes: MINIMAL_PNG, mimeType: 'image/png' as const }]
+    const result = await imagesToPdf(images, { orientation: 'landscape' })
+    expect(await getPageCount(result)).toBe(1)
+  })
+
+  it('produces valid PDF with margin: small on a fixed page size', async () => {
+    const images = [{ bytes: MINIMAL_PNG, mimeType: 'image/png' as const }]
+    // Use a4 so the 20px margin applies to a 595×842 page, not the 1×1 image dimensions
+    const result = await imagesToPdf(images, { pageSize: 'a4', margin: 'small' })
+    expect(await getPageCount(result)).toBe(1)
+  })
+
+  it('throws when tiny image with pageSize fit and margin big makes draw area non-positive', async () => {
+    // MINIMAL_PNG is 1x1px; with margin: 'big' (40px each side), drawW = 1 - 80 <= 0
+    const images = [{ bytes: MINIMAL_PNG, mimeType: 'image/png' as const }]
+    await expect(imagesToPdf(images, { pageSize: 'fit', margin: 'big' })).rejects.toThrow(
+      'Image is too small',
+    )
+  })
 })

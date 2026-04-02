@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import type { DragEndEvent } from '@dnd-kit/core'
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, arrayMove, useSortable } from '@dnd-kit/sortable'
@@ -37,14 +37,19 @@ function SortablePageItem({
   return (
     <li
       ref={setNodeRef}
-      style={style}
+      style={{
+        ...style,
+        background: 'rgba(255,255,255,0.04)',
+        border: '1px solid rgba(255,255,255,0.10)',
+      }}
       className={cn(
-        'flex items-center gap-3 p-3 bg-[--color-surface] border border-[--color-border] rounded-[--radius-lg] transition-shadow',
-        isDragging && 'shadow-[--shadow-lg] opacity-75',
+        'flex items-center gap-3 p-3 rounded-xl transition-shadow',
+        isDragging && 'opacity-75 shadow-2xl',
       )}
     >
       <button
-        className="cursor-grab text-[--color-muted] hover:text-[--color-text] p-1 touch-none"
+        className="cursor-grab p-1 touch-none transition-colors"
+        style={{ color: '#94A3B8' }}
         aria-label="Drag to reorder"
         {...attributes}
         {...listeners}
@@ -54,16 +59,21 @@ function SortablePageItem({
 
       {/* Page thumbnail placeholder */}
       <div
-        className="w-10 h-14 rounded bg-[--color-bg] border border-[--color-border] flex items-center justify-center shrink-0 text-xs text-[--color-muted] font-mono"
-        style={{ transform: `rotate(${entry.rotation}deg)` }}
+        className="w-10 h-14 rounded flex items-center justify-center shrink-0 text-xs font-mono"
+        style={{
+          background: '#060B18',
+          border: '1px solid rgba(255,255,255,0.10)',
+          color: '#94A3B8',
+          transform: `rotate(${entry.rotation}deg)`,
+        }}
       >
         {entry.label}
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-[--color-text]">Page {entry.label}</p>
+        <p className="text-sm font-medium" style={{ color: '#E2E8F0' }}>Page {entry.label}</p>
         {entry.rotation !== 0 && (
-          <p className="text-xs text-[--color-muted]">{entry.rotation}° rotation</p>
+          <p className="text-xs" style={{ color: '#94A3B8' }}>{entry.rotation}° rotation</p>
         )}
       </div>
 
@@ -71,7 +81,8 @@ function SortablePageItem({
         <button
           onClick={() => onRotate(entry.id)}
           disabled={disabled}
-          className="p-1.5 text-[--color-muted] hover:text-[--color-primary] rounded transition-colors"
+          className="p-1.5 rounded transition-colors"
+          style={{ color: '#94A3B8' }}
           aria-label={`Rotate page ${entry.label}`}
           title="Rotate 90°"
         >
@@ -80,7 +91,8 @@ function SortablePageItem({
         <button
           onClick={() => onRemove(entry.id)}
           disabled={disabled}
-          className="p-1.5 text-[--color-muted] hover:text-[--color-error] rounded transition-colors"
+          className="p-1.5 rounded transition-colors"
+          style={{ color: '#94A3B8' }}
           aria-label={`Remove page ${entry.label}`}
         >
           <Trash2 className="w-4 h-4" />
@@ -99,6 +111,12 @@ export function OrganizePdfTool({ tool }: OrganizePdfToolProps) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'processing' | 'done' | 'error'>('idle')
   const [downloadUrl, setDownloadUrl] = useState('')
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    return () => {
+      if (downloadUrl) URL.revokeObjectURL(downloadUrl)
+    }
+  }, [downloadUrl])
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -203,7 +221,7 @@ export function OrganizePdfTool({ tool }: OrganizePdfToolProps) {
       )}
 
       {status === 'loading' && (
-        <div className="flex items-center justify-center py-12 text-[--color-muted] text-sm">
+        <div className="flex items-center justify-center py-12 text-sm" style={{ color: '#94A3B8' }}>
           Loading pages…
         </div>
       )}
@@ -211,7 +229,7 @@ export function OrganizePdfTool({ tool }: OrganizePdfToolProps) {
       {(status === 'ready' || status === 'processing') && pages.length > 0 && (
         <>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-[--color-muted]">
+            <span style={{ color: '#94A3B8' }}>
               {pages.length} of {pageCount} pages · drag to reorder
             </span>
           </div>
@@ -232,7 +250,7 @@ export function OrganizePdfTool({ tool }: OrganizePdfToolProps) {
             </SortableContext>
           </DndContext>
 
-          {error && <p role="alert" className="text-sm text-[--color-error]">{error}</p>}
+          {error && <p role="alert" className="text-sm" style={{ color: '#EF4444' }}>{error}</p>}
 
           <Button
             onClick={handleOrganize}

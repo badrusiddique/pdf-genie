@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { ToolDropzone, ToolResult, type UploadedFile } from '@/components/tool'
 import { Button } from '@/components/ui'
 import type { Tool } from '@/config/tools'
@@ -16,6 +16,12 @@ export function ScanToPdfTool({ tool }: ScanToPdfToolProps) {
   const [status, setStatus] = useState<'idle' | 'processing' | 'done' | 'error'>('idle')
   const [downloadUrl, setDownloadUrl] = useState('')
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    return () => {
+      if (downloadUrl) URL.revokeObjectURL(downloadUrl)
+    }
+  }, [downloadUrl])
 
   const handleConvert = useCallback(async () => {
     if (files.length === 0) return
@@ -64,11 +70,16 @@ export function ScanToPdfTool({ tool }: ScanToPdfToolProps) {
           {/* Options */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1">
-              <label className="text-sm font-medium text-[--color-text]">Page size</label>
+              <label className="text-sm font-medium" style={{ color: '#E2E8F0' }}>Page size</label>
               <select
                 value={pageSize}
                 onChange={e => setPageSize(e.target.value as PageSize)}
-                className="w-full px-3 py-2 text-sm rounded-[--radius] border border-[--color-border] bg-[--color-surface] text-[--color-text] focus:outline-none focus:ring-2 focus:ring-[--color-primary]/30"
+                className="w-full px-3 py-2 text-sm rounded-lg focus:outline-none focus:ring-2"
+                style={{
+                  border: '1px solid rgba(255,255,255,0.10)',
+                  background: 'rgba(255,255,255,0.04)',
+                  color: '#E2E8F0',
+                }}
               >
                 <option value="fit">Fit to image</option>
                 <option value="a4">A4</option>
@@ -77,12 +88,17 @@ export function ScanToPdfTool({ tool }: ScanToPdfToolProps) {
             </div>
 
             <div className="space-y-1">
-              <label className="text-sm font-medium text-[--color-text]">Orientation</label>
+              <label className="text-sm font-medium" style={{ color: '#E2E8F0' }}>Orientation</label>
               <select
                 value={orientation}
                 onChange={e => setOrientation(e.target.value as PageOrientation)}
                 disabled={pageSize === 'fit'}
-                className="w-full px-3 py-2 text-sm rounded-[--radius] border border-[--color-border] bg-[--color-surface] text-[--color-text] focus:outline-none focus:ring-2 focus:ring-[--color-primary]/30 disabled:opacity-50"
+                className="w-full px-3 py-2 text-sm rounded-lg focus:outline-none focus:ring-2 disabled:opacity-50"
+                style={{
+                  border: '1px solid rgba(255,255,255,0.10)',
+                  background: 'rgba(255,255,255,0.04)',
+                  color: '#E2E8F0',
+                }}
               >
                 <option value="portrait">Portrait</option>
                 <option value="landscape">Landscape</option>
@@ -90,11 +106,16 @@ export function ScanToPdfTool({ tool }: ScanToPdfToolProps) {
             </div>
 
             <div className="space-y-1">
-              <label className="text-sm font-medium text-[--color-text]">Margin</label>
+              <label className="text-sm font-medium" style={{ color: '#E2E8F0' }}>Margin</label>
               <select
                 value={margin}
                 onChange={e => setMargin(e.target.value as PageMargin)}
-                className="w-full px-3 py-2 text-sm rounded-[--radius] border border-[--color-border] bg-[--color-surface] text-[--color-text] focus:outline-none focus:ring-2 focus:ring-[--color-primary]/30"
+                className="w-full px-3 py-2 text-sm rounded-lg focus:outline-none focus:ring-2"
+                style={{
+                  border: '1px solid rgba(255,255,255,0.10)',
+                  background: 'rgba(255,255,255,0.04)',
+                  color: '#E2E8F0',
+                }}
               >
                 <option value="none">None</option>
                 <option value="small">Small</option>
@@ -103,7 +124,7 @@ export function ScanToPdfTool({ tool }: ScanToPdfToolProps) {
             </div>
           </div>
 
-          {error && <p role="alert" className="text-sm text-[--color-error]">{error}</p>}
+          {error && <p role="alert" className="text-sm" style={{ color: '#EF4444' }}>{error}</p>}
 
           <Button
             onClick={handleConvert}
