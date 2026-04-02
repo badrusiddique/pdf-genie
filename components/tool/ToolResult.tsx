@@ -1,9 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { CheckCircle2, Download, RotateCcw } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui'
+import { Download, RotateCcw, CheckCircle2 } from 'lucide-react'
 
 interface ToolResultProps {
   downloadUrl: string
@@ -16,21 +14,72 @@ export function ToolResult({ downloadUrl, fileName, onReset }: ToolResultProps) 
 
   // Auto-trigger download after 800ms
   useEffect(() => {
-    const timer = setTimeout(() => {
-      downloadRef.current?.click()
-    }, 800)
+    const timer = setTimeout(() => downloadRef.current?.click(), 800)
     return () => clearTimeout(timer)
   }, [downloadUrl])
 
   return (
-    <div className="flex flex-col items-center gap-6 py-8 text-center">
-      <div className="w-16 h-16 rounded-full bg-[--color-success]/10 flex items-center justify-center">
-        <CheckCircle2 className="w-8 h-8 text-[--color-success]" />
+    <div
+      className="rounded-2xl p-8 sm:p-12 text-center"
+      style={{
+        background: 'rgba(255,255,255,0.04)',
+        border: '1px solid rgba(255,255,255,0.08)',
+      }}
+    >
+      {/* Animated success icon */}
+      <div className="flex justify-center mb-6">
+        <div className="relative">
+          {/* Pulse rings */}
+          <div
+            className="absolute inset-0 rounded-full animate-ping"
+            style={{ background: 'rgba(16,185,129,0.15)', animationDuration: '1.5s' }}
+          />
+          <div
+            className="absolute -inset-3 rounded-full"
+            style={{
+              background: 'rgba(16,185,129,0.08)',
+              animation: 'pulseGlow 2s ease-in-out infinite',
+            }}
+          />
+          {/* Icon */}
+          <div
+            className="relative w-20 h-20 rounded-full flex items-center justify-center"
+            style={{
+              background: 'linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(5,150,105,0.3) 100%)',
+              border: '1px solid rgba(16,185,129,0.3)',
+              boxShadow: '0 0 30px rgba(16,185,129,0.2)',
+            }}
+          >
+            <CheckCircle2
+              className="w-10 h-10"
+              style={{ color: '#10B981' }}
+            />
+          </div>
+        </div>
       </div>
 
-      <div>
-        <h3 className="font-display text-xl font-semibold text-[--color-text] mb-1">Done!</h3>
-        <p className="text-sm text-[--color-muted]">Your file is ready to download</p>
+      {/* Heading */}
+      <h3
+        className="font-display text-2xl sm:text-3xl font-semibold mb-2"
+        style={{ color: '#F1F5F9' }}
+      >
+        Complete!
+      </h3>
+      <p className="text-sm mb-2" style={{ color: '#94A3B8' }}>
+        Your PDF has been processed successfully
+      </p>
+
+      {/* File name */}
+      <div
+        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono mb-8"
+        style={{
+          background: 'rgba(255,255,255,0.04)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          color: '#94A3B8',
+        }}
+      >
+        <span style={{ color: '#10B981' }}>↓</span>
+        {fileName}
       </div>
 
       {/* Hidden auto-download anchor */}
@@ -38,24 +87,49 @@ export function ToolResult({ downloadUrl, fileName, onReset }: ToolResultProps) 
         Download
       </a>
 
-      <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm">
+      {/* Actions */}
+      <div className="flex flex-col sm:flex-row gap-3 max-w-sm mx-auto">
         <a
           href={downloadUrl}
           download={fileName}
-          className={cn(
-            'inline-flex items-center justify-center gap-2 font-medium rounded-[--radius] transition-all duration-[--transition]',
-            'px-6 py-3 text-base',
-            'bg-[--color-primary] text-white hover:bg-[--color-primary-hover] shadow-sm',
-            'flex-1 no-underline',
-          )}
+          className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-sm transition-all duration-200 no-underline"
+          style={{
+            background: 'linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%)',
+            color: '#ffffff',
+            boxShadow: '0 4px 20px rgba(124,58,237,0.35)',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.transform = 'translateY(-1px)'
+            e.currentTarget.style.boxShadow = '0 8px 25px rgba(124,58,237,0.45)'
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.transform = 'translateY(0)'
+            e.currentTarget.style.boxShadow = '0 4px 20px rgba(124,58,237,0.35)'
+          }}
         >
-          <Download className="w-4 h-4" />
-          Download
+          <Download className="w-4 h-4 shrink-0" />
+          Download file
         </a>
-        <Button variant="secondary" size="lg" onClick={onReset} className="flex-1">
-          <RotateCcw className="w-4 h-4" />
-          Process another
-        </Button>
+        <button
+          onClick={onReset}
+          className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-medium transition-all duration-200 whitespace-nowrap"
+          style={{
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.10)',
+            color: '#94A3B8',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.background = 'rgba(255,255,255,0.09)'
+            e.currentTarget.style.color = '#F1F5F9'
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = 'rgba(255,255,255,0.05)'
+            e.currentTarget.style.color = '#94A3B8'
+          }}
+        >
+          <RotateCcw className="w-4 h-4 shrink-0" />
+          Process another PDF
+        </button>
       </div>
     </div>
   )

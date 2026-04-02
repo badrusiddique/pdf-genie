@@ -6,7 +6,7 @@ import type { DragEndEvent } from '@dnd-kit/core'
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, arrayMove, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, ArrowUpDown } from 'lucide-react'
-import { ToolDropzone, ToolResult, type UploadedFile } from '@/components/tool'
+import { ToolDropzone, ToolResult, ToolWorkspace, type UploadedFile } from '@/components/tool'
 import { Button } from '@/components/ui'
 import type { Tool } from '@/config/tools'
 import { cn } from '@/lib/utils'
@@ -131,6 +131,7 @@ export function MergePdfTool({ tool }: MergePdfToolProps) {
   }
 
   return (
+    <ToolWorkspace processing={status === 'processing'} processingLabel="Merging your PDFs…">
     <div className="space-y-6">
       {files.length === 0 ? (
         <ToolDropzone tool={tool} files={files} onFilesChange={setFiles} disabled={status === 'processing'} />
@@ -176,7 +177,7 @@ export function MergePdfTool({ tool }: MergePdfToolProps) {
       )}
 
       {error && (
-        <p role="alert" className="text-sm text-[--color-error]">{error}</p>
+        <p role="alert" className="text-sm mt-2" style={{ color: '#EF4444' }}>{error}</p>
       )}
 
       {files.length >= 2 && (
@@ -197,8 +198,9 @@ export function MergePdfTool({ tool }: MergePdfToolProps) {
       )}
 
       {files.length === 1 && (
-        <p className="text-sm text-[--color-muted] text-center">Add at least one more PDF to merge</p>
+        <p className="text-sm text-center" style={{ color: '#64748B' }}>Add at least one more PDF to merge</p>
       )}
     </div>
+    </ToolWorkspace>
   )
 }

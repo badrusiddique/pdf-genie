@@ -50,7 +50,7 @@ export const tools: Tool[] = [
   },
   {
     slug: 'remove-pages',
-    name: 'Remove Pages',
+    name: 'Remove PDF Pages',
     description: 'Delete unwanted pages from your PDF',
     category: 'organize',
     icon: 'Trash2',
@@ -62,7 +62,7 @@ export const tools: Tool[] = [
   },
   {
     slug: 'extract-pages',
-    name: 'Extract Pages',
+    name: 'Extract PDF Pages',
     description: 'Pull out specific pages into a new PDF',
     category: 'organize',
     icon: 'FileOutput',
@@ -282,7 +282,7 @@ export const tools: Tool[] = [
   },
   {
     slug: 'add-page-numbers',
-    name: 'Add Page Numbers',
+    name: 'Add PDF Page Numbers',
     description: 'Add page numbers to your PDF',
     category: 'edit',
     icon: 'Hash',
@@ -294,7 +294,7 @@ export const tools: Tool[] = [
   },
   {
     slug: 'add-watermark',
-    name: 'Add Watermark',
+    name: 'Add PDF Watermark',
     description: 'Stamp text or image over your PDF pages',
     category: 'edit',
     icon: 'Stamp',

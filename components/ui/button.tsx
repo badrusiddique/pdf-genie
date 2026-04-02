@@ -11,10 +11,10 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: 'bg-[--color-primary] text-white hover:bg-[--color-primary-hover] shadow-sm',
-  secondary: 'bg-[--color-surface] text-[--color-text] border border-[--color-border] hover:bg-[--color-bg]',
-  ghost: 'text-[--color-primary] hover:bg-[--color-primary]/5',
-  danger: 'bg-[--color-error] text-white hover:opacity-90',
+  primary:   'bg-violet-700 text-white hover:bg-violet-800 shadow-sm',
+  secondary: 'bg-white/6 text-[#F1F5F9] border border-white/10 hover:bg-white/10',
+  ghost:     'text-violet-400 hover:bg-violet-400/10',
+  danger:    'bg-red-600 text-white hover:opacity-90',
 }
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -30,7 +30,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         className={cn(
-          'inline-flex items-center justify-center gap-2 font-medium rounded-[--radius] transition-all duration-[--transition]',
+          'inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-200',
           'disabled:opacity-50 disabled:cursor-not-allowed',
           variantClasses[variant],
           sizeClasses[size],
@@ -39,7 +39,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {loading && (
-          <span role="status" aria-label="Loading" className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+          <span
+            role="status"
+            aria-label="Loading"
+            className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin shrink-0"
+          />
         )}
         {children}
       </button>
