@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { Fraunces, Instrument_Sans } from 'next/font/google'
 import './globals.css'
+import { Navbar } from '@/components/layout'
+import { Footer } from '@/components/layout'
 
 const fraunces = Fraunces({
   subsets: ['latin'],
@@ -39,7 +41,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${fraunces.variable} ${instrumentSans.variable}`}>
       <body className="min-h-screen bg-[--color-bg] text-[--color-text]">
-        {children}
+        <Navbar />
+        <div className="pt-14">{children}</div>
+        <Footer />
       </body>
     </html>
   )
