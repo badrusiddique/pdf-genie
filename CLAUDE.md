@@ -18,6 +18,20 @@ Run them in this exact order. If any step fails — STOP. Fix it first. Do not c
 | Lint | `pnpm lint` | React rules violations, `Math.random()` in render, event handlers on server components, unused vars |
 | Unit tests | `pnpm test` | Regressions in PDF processing logic, UI component behaviour |
 | Build | `pnpm build` | SSR failures, missing client/server boundaries, broken static generation |
+| **UI smoke test** | `pnpm dev` + Playwright | **Tool pages render real UI, not "Coming soon"** |
+
+### UI smoke test requirement (mandatory for tool changes)
+
+Before committing any new tool or change to `app/[tool]/page.tsx`, you MUST:
+
+1. Start the dev server: `pnpm dev`
+2. Run Playwright against affected pages using the `webapp-testing` skill
+3. Confirm every modified/added tool slug renders its component — not the "Coming soon" fallback
+4. **Report results to the user** before committing — list each page checked and its status
+
+**Never claim QA passes without specifying what UI pages were smoke-tested.**
+
+This rule exists because unit tests + build passed while Compress PDF shipped a "Coming soon" placeholder — the missing `CompressPdfTool.tsx` component and `page.tsx` case were invisible to static checks.
 
 ### Common failure patterns to watch for
 
