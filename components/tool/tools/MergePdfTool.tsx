@@ -1,83 +1,217 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import {
+  DndContext, closestCenter, KeyboardSensor, PointerSensor,
+  useSensor, useSensors,
+} from '@dnd-kit/core'
 import type { DragEndEvent } from '@dnd-kit/core'
-import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, arrayMove, useSortable } from '@dnd-kit/sortable'
+import {
+  SortableContext, sortableKeyboardCoordinates,
+  horizontalListSortingStrategy, arrayMove, useSortable,
+} from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, ArrowUpDown } from 'lucide-react'
-import { ToolDropzone, ToolResult, ToolWorkspace, type UploadedFile } from '@/components/tool'
-import { Button } from '@/components/ui'
+import { Plus, X, ArrowUpDown, Info, GitMerge } from 'lucide-react'
+import { ToolLayout, ToolResult, PdfThumbnail, type UploadedFile } from '@/components/tool'
 import type { Tool } from '@/config/tools'
-import { cn } from '@/lib/utils'
 import { formatFileSize } from '@/lib/file-utils'
+import { cn } from '@/lib/utils'
 
-// Sortable file item for drag-to-reorder
-function SortableFileItem({ uploadedFile, onRemove, disabled }: {
+// ── Sortable PDF thumbnail card ──────────────────────────────────
+function SortableCard({
+  uploadedFile,
+  index,
+  onRemove,
+  disabled,
+}: {
   uploadedFile: UploadedFile
+  index: number
   onRemove: (id: string) => void
   disabled: boolean
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: uploadedFile.id })
-  const style = { transform: CSS.Transform.toString(transform), transition }
+  const {
+    attributes, listeners, setNodeRef,
+    transform, transition, isDragging,
+  } = useSortable({ id: uploadedFile.id })
 
   return (
     <li
       ref={setNodeRef}
-      style={style}
+      style={{ transform: CSS.Transform.toString(transform), transition }}
       className={cn(
-        'flex items-center gap-3 p-3 bg-[--color-surface] border border-[--color-border] rounded-[--radius-lg] transition-shadow',
-        isDragging && 'shadow-[--shadow-lg] opacity-75',
+        'relative flex flex-col cursor-grab rounded-lg overflow-hidden shrink-0',
+        'transition-all duration-200',
+        isDragging ? 'opacity-60 scale-95 shadow-2xl z-50' : 'hover:scale-[1.02]',
       )}
+      {...attributes}
+      {...listeners}
     >
+      {/* Remove button */}
       <button
-        className="cursor-grab text-[--color-muted] hover:text-[--color-text] p-1 touch-none"
-        aria-label="Drag to reorder"
-        {...attributes}
-        {...listeners}
-      >
-        <GripVertical className="w-4 h-4" />
-      </button>
-      <div className="w-10 h-10 rounded bg-[--color-bg] flex items-center justify-center shrink-0">
-        <span className="text-xs text-[--color-muted] font-mono">PDF</span>
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-[--color-text] truncate">{uploadedFile.file.name}</p>
-        <p className="text-xs text-[--color-muted]">{formatFileSize(uploadedFile.file.size)}</p>
-      </div>
-      <button
-        onClick={() => onRemove(uploadedFile.id)}
+        className="absolute top-2 right-2 z-10 w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+        style={{ background: 'rgba(0,0,0,0.7)', color: '#fff' }}
+        onClick={e => { e.stopPropagation(); onRemove(uploadedFile.id) }}
         disabled={disabled}
-        className="p-1.5 text-[--color-muted] hover:text-[--color-error] rounded transition-colors"
         aria-label={`Remove ${uploadedFile.file.name}`}
+        onPointerDown={e => e.stopPropagation()}
       >
-        ×
+        <X className="w-3 h-3" />
       </button>
+
+      {/* Order badge */}
+      <div
+        className="absolute top-2 left-2 z-10 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold"
+        style={{ background: 'rgba(124,58,237,0.9)', color: '#fff' }}
+      >
+        {index + 1}
+      </div>
+
+      {/* PDF thumbnail */}
+      <div
+        className="group rounded-lg overflow-hidden"
+        style={{ border: '1px solid rgba(255,255,255,0.10)', background: '#1a1730' }}
+      >
+        <PdfThumbnail file={uploadedFile.file} width={160} />
+      </div>
+
+      {/* Filename */}
+      <div className="pt-2 px-1">
+        <p
+          className="text-xs font-medium truncate text-center"
+          style={{ color: '#E2E8F0', maxWidth: '160px' }}
+          title={uploadedFile.file.name}
+        >
+          {uploadedFile.file.name}
+        </p>
+        <p className="text-[10px] text-center mt-0.5" style={{ color: '#475569' }}>
+          {formatFileSize(uploadedFile.file.size)}
+        </p>
+      </div>
     </li>
   )
 }
 
+// ── Add file card ─────────────────────────────────────────────────
+function AddFileCard({ onClick, disabled }: { onClick: () => void; disabled: boolean }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className="shrink-0 flex flex-col items-center justify-center rounded-lg transition-all duration-200 hover:scale-[1.02] disabled:opacity-50"
+      style={{
+        width: '160px',
+        height: '226px', // matches A4 ratio thumbnail
+        background: 'rgba(124,58,237,0.06)',
+        border: '2px dashed rgba(124,58,237,0.3)',
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.background = 'rgba(124,58,237,0.12)'
+        e.currentTarget.style.borderColor = 'rgba(124,58,237,0.6)'
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.background = 'rgba(124,58,237,0.06)'
+        e.currentTarget.style.borderColor = 'rgba(124,58,237,0.3)'
+      }}
+      aria-label="Add more PDF files"
+    >
+      <Plus className="w-8 h-8 mb-2" style={{ color: '#7C3AED' }} />
+      <span className="text-xs font-medium" style={{ color: '#7C3AED' }}>Add PDF</span>
+    </button>
+  )
+}
+
+// ── Drop zone (empty state) ───────────────────────────────────────
+function EmptyDropZone({
+  tool,
+  onFiles,
+}: {
+  tool: Tool
+  onFiles: (files: File[]) => void
+}) {
+  const [over, setOver] = useState(false)
+  const inputId = 'merge-file-input'
+
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      aria-label="Upload PDF files"
+      className="flex flex-col items-center justify-center gap-4 rounded-2xl cursor-pointer transition-all duration-200"
+      style={{
+        minHeight: '360px',
+        background: over ? 'rgba(124,58,237,0.08)' : 'rgba(255,255,255,0.02)',
+        border: `2px dashed ${over ? 'rgba(124,58,237,0.6)' : 'rgba(255,255,255,0.10)'}`,
+      }}
+      onDragOver={e => { e.preventDefault(); setOver(true) }}
+      onDragLeave={() => setOver(false)}
+      onDrop={e => {
+        e.preventDefault()
+        setOver(false)
+        onFiles(Array.from(e.dataTransfer.files).filter(f => f.type === 'application/pdf'))
+      }}
+      onClick={() => document.getElementById(inputId)?.click()}
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') document.getElementById(inputId)?.click() }}
+    >
+      <div
+        className="w-16 h-16 rounded-2xl flex items-center justify-center"
+        style={{ background: over ? 'rgba(124,58,237,0.2)' : 'rgba(255,255,255,0.04)' }}
+      >
+        <GitMerge className="w-8 h-8" style={{ color: over ? '#A78BFA' : '#475569' }} />
+      </div>
+      <div className="text-center">
+        <p className="font-medium mb-1" style={{ color: '#E2E8F0' }}>
+          {over ? 'Drop PDFs here' : 'Select PDF files to merge'}
+        </p>
+        <p className="text-sm" style={{ color: '#475569' }}>
+          Drop files here or click to browse · up to {tool.maxFiles} files · {tool.maxSizeMB} MB each
+        </p>
+      </div>
+      <input
+        id={inputId}
+        type="file"
+        accept="application/pdf"
+        multiple
+        className="sr-only"
+        onChange={e => onFiles(Array.from(e.target.files ?? []))}
+      />
+    </div>
+  )
+}
+
+// ── Main component ────────────────────────────────────────────────
 interface MergePdfToolProps { tool: Tool }
 
 export function MergePdfTool({ tool }: MergePdfToolProps) {
   const [files, setFiles] = useState<UploadedFile[]>([])
   const [status, setStatus] = useState<'idle' | 'processing' | 'done' | 'error'>('idle')
-  const [downloadUrl, setDownloadUrl] = useState<string>('')
-  const [error, setError] = useState<string>('')
+  const [downloadUrl, setDownloadUrl] = useState('')
+  const [error, setError] = useState('')
   const [abortController, setAbortController] = useState<AbortController | null>(null)
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   )
 
-  const handleDragEnd = useCallback((event: DragEndEvent) => {
-    const { active, over } = event
+  const addFiles = useCallback((newFiles: File[]) => {
+    const valid = newFiles.filter(f => f.type === 'application/pdf').slice(0, tool.maxFiles - files.length)
+    setFiles(prev => [
+      ...prev,
+      ...valid.map(f => ({ file: f, id: `${f.name}-${f.size}-${Date.now()}-${Math.random()}` })),
+    ])
+  }, [files.length, tool.maxFiles])
+
+  const removeFile = useCallback((id: string) => {
+    setFiles(prev => prev.filter(f => f.id !== id))
+  }, [])
+
+  const handleDragEnd = useCallback((e: DragEndEvent) => {
+    const { active, over } = e
     if (over && active.id !== over.id) {
       setFiles(items => {
-        const oldIndex = items.findIndex(i => i.id === active.id)
-        const newIndex = items.findIndex(i => i.id === over.id)
-        return arrayMove(items, oldIndex, newIndex)
+        const a = items.findIndex(i => i.id === active.id)
+        const b = items.findIndex(i => i.id === over.id)
+        return arrayMove(items, a, b)
       })
     }
   }, [])
@@ -102,8 +236,7 @@ export function MergePdfTool({ tool }: MergePdfToolProps) {
       if (ac.signal.aborted) return
 
       const blob = new Blob([merged.buffer as ArrayBuffer], { type: 'application/pdf' })
-      const url = URL.createObjectURL(blob)
-      setDownloadUrl(url)
+      setDownloadUrl(URL.createObjectURL(blob))
       setStatus('done')
     } catch (err) {
       if (!ac.signal.aborted) {
@@ -113,11 +246,6 @@ export function MergePdfTool({ tool }: MergePdfToolProps) {
     }
   }, [files])
 
-  const handleCancel = useCallback(() => {
-    abortController?.abort()
-    setStatus('idle')
-  }, [abortController])
-
   const handleReset = useCallback(() => {
     if (downloadUrl) URL.revokeObjectURL(downloadUrl)
     setFiles([])
@@ -126,81 +254,158 @@ export function MergePdfTool({ tool }: MergePdfToolProps) {
     setError('')
   }, [downloadUrl])
 
+  // ── Done state ──
   if (status === 'done') {
-    return <ToolResult downloadUrl={downloadUrl} fileName="merged.pdf" onReset={handleReset} />
+    return (
+      <div className="max-w-xl mx-auto px-6 py-12">
+        <ToolResult downloadUrl={downloadUrl} fileName="merged.pdf" onReset={handleReset} />
+      </div>
+    )
   }
 
-  return (
-    <ToolWorkspace processing={status === 'processing'} processingLabel="Merging your PDFs…">
-    <div className="space-y-6">
-      {files.length === 0 ? (
-        <ToolDropzone tool={tool} files={files} onFilesChange={setFiles} disabled={status === 'processing'} />
-      ) : (
-        <div className="space-y-3">
-          {/* File reorder controls */}
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-[--color-text]">{files.length} file{files.length > 1 ? 's' : ''} selected</p>
-            <button
-              onClick={sortByName}
-              className="flex items-center gap-1.5 text-xs text-[--color-primary] hover:underline"
-            >
-              <ArrowUpDown className="w-3 h-3" />
-              Sort by name
-            </button>
-          </div>
+  // ── Sidebar content ──
+  const sidebar = (
+    <div className="space-y-5">
+      {/* Tip */}
+      <div
+        className="flex gap-2.5 p-3 rounded-lg text-xs leading-relaxed"
+        style={{ background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.15)' }}
+      >
+        <Info className="w-4 h-4 shrink-0 mt-0.5" style={{ color: '#A78BFA' }} />
+        <span style={{ color: '#94A3B8' }}>
+          {files.length > 0
+            ? 'Drag and drop the PDF cards to set the merge order.'
+            : 'Select multiple PDF files. You can reorder them before merging.'}
+        </span>
+      </div>
 
-          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-            <SortableContext items={files.map(f => f.id)} strategy={verticalListSortingStrategy}>
-              <ul className="space-y-2">
-                {files.map(f => (
-                  <SortableFileItem
+      {/* Sort button */}
+      {files.length > 1 && (
+        <button
+          onClick={sortByName}
+          className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm transition-all duration-150"
+          style={{
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            color: '#94A3B8',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = '#F1F5F9' }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = '#94A3B8' }}
+        >
+          <ArrowUpDown className="w-4 h-4 shrink-0" />
+          Sort by name
+        </button>
+      )}
+
+      {/* Error */}
+      {error && (
+        <p role="alert" className="text-sm px-3 py-2 rounded-lg" style={{ color: '#EF4444', background: 'rgba(239,68,68,0.08)' }}>
+          {error}
+        </p>
+      )}
+
+      {/* Status when processing */}
+      {status === 'processing' && (
+        <div className="space-y-3">
+          <div className="flex items-center gap-3 text-sm" style={{ color: '#94A3B8' }}>
+            <div className="w-4 h-4 border-2 border-violet-500/30 border-t-violet-500 rounded-full animate-spin shrink-0" />
+            Merging {files.length} PDFs…
+          </div>
+          <button
+            onClick={() => { abortController?.abort(); setStatus('idle') }}
+            className="w-full py-2 text-xs rounded-lg transition-colors"
+            style={{ color: '#EF4444', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+    </div>
+  )
+
+  // ── Sticky action button ──
+  const action = (
+    <button
+      onClick={handleMerge}
+      disabled={files.length < 2 || status === 'processing'}
+      className="w-full flex items-center justify-between px-5 py-4 rounded-xl font-semibold text-sm transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+      style={{
+        background: files.length >= 2 ? 'linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%)' : 'rgba(255,255,255,0.05)',
+        color: '#ffffff',
+        boxShadow: files.length >= 2 ? '0 4px 20px rgba(124,58,237,0.35)' : 'none',
+      }}
+    >
+      <span>Merge PDF</span>
+      <span className="text-lg">→</span>
+    </button>
+  )
+
+  // ── Sidebar header ──
+  const sidebarHeader = (
+    <div className="flex items-center justify-between">
+      <h2 className="font-display text-base font-semibold" style={{ color: '#F1F5F9' }}>
+        Merge PDF
+      </h2>
+      {files.length > 0 && (
+        <span
+          className="w-7 h-7 rounded-full text-xs font-bold flex items-center justify-center"
+          style={{ background: '#7C3AED', color: '#fff' }}
+        >
+          {files.length}
+        </span>
+      )}
+    </div>
+  )
+
+  return (
+    <ToolLayout sidebar={sidebar} action={action} sidebarHeader={sidebarHeader}>
+      {files.length === 0 ? (
+        // Empty drop zone
+        <EmptyDropZone tool={tool} onFiles={addFiles} />
+      ) : (
+        // File thumbnail grid — horizontal scroll, drag-to-reorder
+        <div className="h-full">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={files.map(f => f.id)}
+              strategy={horizontalListSortingStrategy}
+            >
+              <ul className="flex flex-wrap gap-5 content-start">
+                {files.map((f, i) => (
+                  <SortableCard
                     key={f.id}
                     uploadedFile={f}
-                    onRemove={id => setFiles(prev => prev.filter(f => f.id !== id))}
+                    index={i}
+                    onRemove={removeFile}
                     disabled={status === 'processing'}
                   />
                 ))}
+
+                {/* Add more */}
+                {files.length < tool.maxFiles && (
+                  <AddFileCard
+                    disabled={status === 'processing'}
+                    onClick={() => {
+                      const inp = document.createElement('input')
+                      inp.type = 'file'
+                      inp.accept = 'application/pdf'
+                      inp.multiple = true
+                      inp.onchange = (e) => {
+                        addFiles(Array.from((e.target as HTMLInputElement).files ?? []))
+                      }
+                      inp.click()
+                    }}
+                  />
+                )}
               </ul>
             </SortableContext>
           </DndContext>
-
-          {/* Add more files */}
-          {files.length < tool.maxFiles && (
-            <ToolDropzone
-              tool={tool}
-              files={files}
-              onFilesChange={setFiles}
-              disabled={status === 'processing'}
-            />
-          )}
         </div>
       )}
-
-      {error && (
-        <p role="alert" className="text-sm mt-2" style={{ color: '#EF4444' }}>{error}</p>
-      )}
-
-      {files.length >= 2 && (
-        <div className="flex gap-3">
-          <Button
-            onClick={handleMerge}
-            disabled={status === 'processing'}
-            loading={status === 'processing'}
-            size="lg"
-            className="flex-1"
-          >
-            {status === 'processing' ? 'Merging…' : `Merge ${files.length} PDFs`}
-          </Button>
-          {status === 'processing' && (
-            <Button variant="secondary" size="lg" onClick={handleCancel}>Cancel</Button>
-          )}
-        </div>
-      )}
-
-      {files.length === 1 && (
-        <p className="text-sm text-center" style={{ color: '#64748B' }}>Add at least one more PDF to merge</p>
-      )}
-    </div>
-    </ToolWorkspace>
+    </ToolLayout>
   )
 }
