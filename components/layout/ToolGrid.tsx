@@ -9,7 +9,8 @@ import { cn } from '@/lib/utils'
 
 // Dynamically resolve a Lucide icon by name
 function ToolIcon({ name, className }: { name: string; className?: string }) {
-  const Icon = (LucideIcons as Record<string, React.ComponentType<{ className?: string }>>)[name]
+  const icons = LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>
+  const Icon = icons[name]
   if (!Icon) return <LucideIcons.FileText className={className} />
   return <Icon className={className} />
 }
