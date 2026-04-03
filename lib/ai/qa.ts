@@ -1,43 +1,85 @@
-import { chunkText } from '@/lib/pdf/extractText'
 import { hfInference } from './huggingface'
 
-const QA_MODEL = 'deepset/roberta-base-squad2'
-const CHUNK_WORDS = 500
-const MAX_CONTEXT_CHUNKS = 5
-const LOW_CONFIDENCE_THRESHOLD = 0.05
-
-const KIMI_MODEL = 'moonshotai/Kimi-K2.5'
-const KIMI_ENDPOINT = `https://router.huggingface.co/hf-inference/models/${KIMI_MODEL}/v1/chat/completions`
-const MAX_CONTEXT_CHARS = 8000
+const BART_MODEL = 'facebook/bart-large-cnn'
 
 export interface ChatMessage {
   role: 'user' | 'assistant'
   content: string
 }
 
-function scoreChunk(chunk: string, questionWords: string[]): number {
-  const lower = chunk.toLowerCase()
-  return questionWords.filter(w => w.length > 3 && lower.includes(w)).length
+/**
+ * Splits text into section-aware chunks.
+ * Detects ALL-CAPS headers (common in resumes, reports) and splits there.
+ * Falls back to sentence-level splitting for documents without headers.
+ */
+export function splitIntoSections(text: string): string[] {
+  // Detect ALL-CAPS section headers (2+ words or a single word >= 4 chars)
+  const headerPattern = /\b([A-Z]{2}[A-Z\s&\/]{1,30})\b(?=\s)/g
+  const matches = [...text.matchAll(headerPattern)]
+
+  if (matches.length >= 2) {
+    // Section-based split: each section header starts a new chunk
+    const sections: string[] = []
+    let lastIdx = 0
+    for (const match of matches) {
+      const slice = text.slice(lastIdx, match.index).trim()
+      if (slice.length > 20) sections.push(slice)
+      lastIdx = match.index!
+    }
+    sections.push(text.slice(lastIdx).trim())
+    return sections.filter(s => s.trim().length > 20)
+  }
+
+  // No headers — split by sentences (50 words per chunk)
+  const words = text.trim().split(/\s+/)
+  const chunks: string[] = []
+  for (let i = 0; i < words.length; i += 50) {
+    chunks.push(words.slice(i, i + 50).join(' '))
+  }
+  return chunks.filter(s => s.trim().length > 0)
 }
 
+function scoreSection(section: string, questionWords: string[]): number {
+  const lower = section.toLowerCase()
+  return questionWords.filter(w => w.length > 2 && lower.includes(w)).length
+}
+
+/**
+ * Finds the most relevant text sections for a question.
+ * Exported for unit testing.
+ */
 export function findRelevantChunks(question: string, context: string, maxChunks: number): string[] {
   if (!context.trim()) return []
-  const chunks = chunkText(context, CHUNK_WORDS)
-  if (chunks.length === 0) return []
+  const sections = splitIntoSections(context)
+  if (sections.length === 0) return []
   const qWords = question.toLowerCase().split(/\W+/).filter(w => w.length > 2)
-  return chunks
-    .map(chunk => ({ chunk, score: scoreChunk(chunk, qWords) }))
+  return sections
+    .map(s => ({ s, score: scoreSection(s, qWords) }))
     .sort((a, b) => b.score - a.score)
     .slice(0, maxChunks)
-    .map(({ chunk }) => chunk)
+    .map(({ s }) => s)
 }
 
+/**
+ * Joins sections for display.
+ * Exported for unit testing.
+ */
 export function buildQaContext(chunks: string[]): string {
   return chunks.join('\n\n---\n\n')
 }
 
-interface RobertaQaResponse { answer: string; score: number; start: number; end: number }
+interface BartResponse { summary_text: string }
 
+/**
+ * Answers a question from document context.
+ *
+ * Strategy:
+ * 1. Split document into sections (by ALL-CAPS headers or sentences)
+ * 2. Find sections most relevant to the question via keyword scoring
+ * 3. If the relevant section is short (< 100 words) — return it directly as the answer
+ *    (it IS the answer — e.g. an education section listing degrees)
+ * 4. If the relevant section is long — summarize with BART to get a concise answer
+ */
 export async function answerQuestion(
   question: string,
   fullContext: string,
@@ -46,79 +88,45 @@ export async function answerQuestion(
   if (!question.trim()) throw new Error('Question cannot be empty')
   if (!fullContext.trim()) throw new Error('No document context available')
 
-  const chunks = findRelevantChunks(question, fullContext, MAX_CONTEXT_CHUNKS)
-  const context = buildQaContext(chunks) || fullContext.slice(0, 3000)
+  const sections = splitIntoSections(fullContext)
+  if (sections.length === 0) {
+    return { answer: 'No readable text found in the uploaded document(s).', score: 0 }
+  }
 
-  const result = await hfInference<RobertaQaResponse>(
-    QA_MODEL,
-    { inputs: { question, context } },
+  const qWords = question.toLowerCase().split(/\W+/).filter(w => w.length > 2)
+
+  const scored = sections
+    .map(s => ({ s, score: scoreSection(s, qWords) }))
+    .sort((a, b) => b.score - a.score)
+
+  // Take the top 2 most relevant sections
+  const topSections = scored.filter(x => x.score > 0).slice(0, 2).map(x => x.s)
+  const relevant = topSections.length > 0 ? topSections : sections.slice(0, 2)
+  const relevantText = relevant.join('\n\n').trim()
+
+  const wordCount = relevantText.split(/\s+/).length
+
+  // Short relevant section → return it directly (it IS the answer)
+  if (wordCount <= 120) {
+    // Clean up repetitive whitespace while preserving structure
+    const clean = relevantText.replace(/\s{3,}/g, '  ').trim()
+    return { answer: clean, score: scored[0]?.score > 0 ? 0.8 : 0.3 }
+  }
+
+  // Longer section → summarize with BART
+  const result = await hfInference<BartResponse[]>(
+    BART_MODEL,
+    { inputs: relevantText, parameters: { max_length: 200, min_length: 30, do_sample: false } },
     apiKey,
   )
 
-  if (result.score < LOW_CONFIDENCE_THRESHOLD) {
+  const answer = result[0]?.summary_text?.trim()
+  if (!answer) {
     return {
-      answer: "I couldn't find a clear answer to that in the uploaded document(s). Try rephrasing or ask about something mentioned in the text.",
-      score: result.score,
+      answer: "I couldn't find a clear answer in the uploaded document(s). Try rephrasing your question.",
+      score: 0,
     }
   }
 
-  return { answer: result.answer, score: result.score }
-}
-
-/**
- * Sends a conversation with PDF context to Kimi K2.5 via HuggingFace.
- * history is all previous turns (user + assistant); the last user message is already included.
- */
-export async function chatWithKimi(
-  history: ChatMessage[],
-  fullContext: string,
-  apiKey: string,
-): Promise<string> {
-  if (!apiKey) throw new Error('HUGGINGFACE_API_KEY is not configured')
-  if (history.length === 0) throw new Error('No messages in conversation')
-
-  const lastQuestion = history[history.length - 1].content
-
-  // Find relevant context chunks for the latest question
-  const chunks = findRelevantChunks(lastQuestion, fullContext, 5)
-  const context = buildQaContext(chunks) || fullContext.slice(0, MAX_CONTEXT_CHARS)
-
-  const systemPrompt = `You are a helpful document assistant. Answer questions based ONLY on the provided document context. If the answer is not in the context, say so clearly — do not make up information. Be concise and direct.
-
-Document context:
-${context.slice(0, MAX_CONTEXT_CHARS)}`
-
-  const messages = [
-    { role: 'system', content: systemPrompt },
-    ...history,
-  ]
-
-  const res = await fetch(KIMI_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: KIMI_MODEL,
-      messages,
-      max_tokens: 500,
-      temperature: 0.3,
-      stream: false,
-    }),
-  })
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({})) as { error?: string }
-    // Model loading (503) — give user a useful message
-    if (res.status === 503) {
-      throw new Error('Kimi K2.5 is warming up. Please try again in 30 seconds.')
-    }
-    throw new Error(err.error ?? `Kimi API error: ${res.status}`)
-  }
-
-  const json = await res.json() as { choices: { message: { content: string } }[] }
-  const answer = json.choices?.[0]?.message?.content?.trim()
-  if (!answer) throw new Error('No response from Kimi K2.5')
-  return answer
+  return { answer, score: 1 }
 }
