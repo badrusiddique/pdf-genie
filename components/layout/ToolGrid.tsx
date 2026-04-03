@@ -6,6 +6,12 @@ import { motion, AnimatePresence } from 'framer-motion'
 import * as LucideIcons from 'lucide-react'
 import { type Tool, type ToolCategory, CATEGORIES, CATEGORY_LABELS } from '@/config/tools'
 
+const AVAILABLE_SLUGS = new Set([
+  'merge-pdf', 'split-pdf', 'remove-pages', 'extract-pages',
+  'organize-pdf', 'scan-to-pdf', 'compress-pdf',
+  'jpg-to-pdf', 'html-to-pdf', 'word-to-pdf', 'excel-to-pdf', 'powerpoint-to-pdf',
+])
+
 function ToolIcon({ name, className }: { name: string; className?: string }) {
   const icons = LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>
   const Icon = icons[name]
@@ -35,6 +41,7 @@ const categoryGlow: Record<ToolCategory, string> = {
 }
 
 function ToolCard({ tool, index }: { tool: Tool; index: number }) {
+  const isAvailable = AVAILABLE_SLUGS.has(tool.slug)
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -42,7 +49,30 @@ function ToolCard({ tool, index }: { tool: Tool; index: number }) {
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.2, delay: index * 0.02 }}
       layout
+      style={{ position: 'relative', opacity: isAvailable ? 1 : 0.65 }}
     >
+      {!isAvailable && (
+        <span
+          style={{
+            position: 'absolute',
+            top: '10px',
+            right: '10px',
+            fontSize: '9px',
+            fontWeight: 700,
+            letterSpacing: '0.05em',
+            textTransform: 'uppercase',
+            background: 'rgba(100,116,139,0.25)',
+            border: '1px solid rgba(100,116,139,0.35)',
+            color: '#94A3B8',
+            padding: '2px 6px',
+            borderRadius: '4px',
+            zIndex: 1,
+            pointerEvents: 'none',
+          }}
+        >
+          Soon
+        </span>
+      )}
       <Link
         href={`/${tool.slug}`}
         className="group flex flex-col gap-4 p-5 rounded-2xl h-full transition-all duration-300 focus-visible:outline-none"
