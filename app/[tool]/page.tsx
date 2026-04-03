@@ -25,6 +25,7 @@ async function getToolComponent(slug: string) {
     case 'organize-pdf': return (await import('@/components/tool/tools/OrganizePdfTool')).OrganizePdfTool
     case 'scan-to-pdf': return (await import('@/components/tool/tools/ScanToPdfTool')).ScanToPdfTool
     case 'compress-pdf': return (await import('@/components/tool/tools/CompressPdfTool')).CompressPdfTool
+    case 'jpg-to-pdf': return (await import('@/components/tool/tools/JpgToPdfTool')).JpgToPdfTool
     default: return null
   }
 }
