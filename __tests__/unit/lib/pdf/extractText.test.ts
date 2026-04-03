@@ -1,19 +1,9 @@
 import { describe, it, expect, vi } from 'vitest'
 import { chunkText } from '@/lib/pdf/extractText'
 
-// Mock pdfjs-dist to avoid worker and browser API issues in test env
-vi.mock('pdfjs-dist/legacy/build/pdf.mjs', () => ({
-  GlobalWorkerOptions: { workerSrc: '' },
-  getDocument: vi.fn().mockReturnValue({
-    promise: Promise.resolve({
-      numPages: 1,
-      getPage: vi.fn().mockResolvedValue({
-        getTextContent: vi.fn().mockResolvedValue({
-          items: [{ str: 'mocked text content' }],
-        }),
-      }),
-    }),
-  }),
+// Mock unpdf to avoid loading pdfjs-dist worker in test environment
+vi.mock('unpdf', () => ({
+  extractText: vi.fn().mockResolvedValue({ totalPages: 1, text: 'mocked extracted text content' }),
 }))
 
 describe('chunkText', () => {
@@ -52,10 +42,10 @@ describe('extractPdfText - input validation', () => {
     await expect(extractPdfText(new Uint8Array([1, 2, 3, 4]))).rejects.toThrow()
   })
 
-  it('extracts text from valid PDF bytes (mocked pdfjs)', async () => {
+  it('extracts text from valid PDF (mocked)', async () => {
     const { extractPdfText } = await import('@/lib/pdf/extractText')
-    const validPdf = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2D, 0x31, 0x2E, 0x34])
-    const result = await extractPdfText(validPdf)
+    const validHeader = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2D])
+    const result = await extractPdfText(validHeader)
     expect(typeof result).toBe('string')
   })
 })
