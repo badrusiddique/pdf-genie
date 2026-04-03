@@ -5,7 +5,7 @@ const SUMMARIZATION_MODEL = 'facebook/bart-large-cnn'
 const CHUNK_WORDS = 400
 const MIN_WORDS_FOR_CHUNK = 10
 
-const KIMI_ENDPOINT = 'https://api-inference.huggingface.co/models/moonshotai/Kimi-K2.5/v1/chat/completions'
+const KIMI_ENDPOINT = 'https://router.huggingface.co/hf-inference/models/moonshotai/Kimi-K2.5/v1/chat/completions'
 const KIMI_MODEL = 'moonshotai/Kimi-K2.5'
 const MAX_TEXT_CHARS = 15000 // Kimi has 256k context window; 15k chars is a safe chunk for free tier
 

@@ -7,7 +7,7 @@ const MAX_CONTEXT_CHUNKS = 5
 const LOW_CONFIDENCE_THRESHOLD = 0.05
 
 const KIMI_MODEL = 'moonshotai/Kimi-K2.5'
-const KIMI_ENDPOINT = `https://api-inference.huggingface.co/models/${KIMI_MODEL}/v1/chat/completions`
+const KIMI_ENDPOINT = `https://router.huggingface.co/hf-inference/models/${KIMI_MODEL}/v1/chat/completions`
 const MAX_CONTEXT_CHARS = 8000
 
 export interface ChatMessage {

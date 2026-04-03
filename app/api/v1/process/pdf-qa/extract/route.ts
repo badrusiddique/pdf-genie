@@ -41,9 +41,10 @@ export async function POST(req: NextRequest) {
     try {
       const text = await extractPdfText(bytes)
       if (text.trim()) allTexts.push(`=== ${file.name} ===\n${text}`)
-    } catch {
+    } catch (extractErr) {
+      const msg = extractErr instanceof Error ? extractErr.message : String(extractErr)
       return NextResponse.json(
-        { success: false, error: { code: 'EXTRACT_FAILED', message: `Failed to extract text from ${file.name}` } },
+        { success: false, error: { code: 'EXTRACT_FAILED', message: `Failed to extract text from ${file.name}: ${msg}` } },
         { status: 422 },
       )
     }

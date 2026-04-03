@@ -1,4 +1,4 @@
-const HF_API_BASE = 'https://api-inference.huggingface.co/models'
+const HF_API_BASE = 'https://router.huggingface.co/hf-inference/models'
 const MAX_RETRIES = 3
 const RETRY_DELAY_MS = 5000
 
