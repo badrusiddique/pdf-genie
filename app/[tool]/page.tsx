@@ -28,6 +28,7 @@ async function getToolComponent(slug: string) {
     case 'jpg-to-pdf': return (await import('@/components/tool/tools/JpgToPdfTool')).JpgToPdfTool
     case 'html-to-pdf': return (await import('@/components/tool/tools/HtmlToPdfTool')).HtmlToPdfTool
     case 'word-to-pdf': return (await import('@/components/tool/tools/WordToPdfTool')).WordToPdfTool
+    case 'excel-to-pdf': return (await import('@/components/tool/tools/ExcelToPdfTool')).ExcelToPdfTool
     default: return null
   }
 }
