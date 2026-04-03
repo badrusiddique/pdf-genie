@@ -4,7 +4,7 @@ import { chunkText } from '@/lib/pdf/extractText'
 // extractPdfText uses pdfjs-dist with require() — it works in Node/API routes
 // but may not load cleanly in vitest JSDOM. Test chunkText (pure) + basic smoke test.
 
-vi.mock('pdfjs-dist/legacy/build/pdf.js', () => ({
+vi.mock('pdfjs-dist/legacy/build/pdf.mjs', () => ({
   getDocument: vi.fn().mockReturnValue({
     promise: Promise.resolve({
       numPages: 1,

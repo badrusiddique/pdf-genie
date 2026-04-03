@@ -30,6 +30,7 @@ async function getToolComponent(slug: string) {
     case 'word-to-pdf': return (await import('@/components/tool/tools/WordToPdfTool')).WordToPdfTool
     case 'excel-to-pdf': return (await import('@/components/tool/tools/ExcelToPdfTool')).ExcelToPdfTool
     case 'powerpoint-to-pdf': return (await import('@/components/tool/tools/PowerPointToPdfTool')).PowerPointToPdfTool
+    case 'ai-summarizer': return (await import('@/components/tool/tools/AiSummarizerTool')).AiSummarizerTool
     default: return null
   }
 }

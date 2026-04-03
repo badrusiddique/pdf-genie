@@ -3,7 +3,6 @@
  * Uses require() to avoid ESM issues in Next.js serverless functions.
  */
 
-/* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 /**
@@ -25,8 +24,8 @@ export async function extractPdfText(pdfBytes: Uint8Array): Promise<string> {
     throw new Error('Input is not a valid PDF file')
   }
 
-  // Dynamic require to avoid bundling issues
-  const pdfjsLib = require('pdfjs-dist/legacy/build/pdf.js')
+  // Dynamic import to avoid bundling issues with Turbopack
+  const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs')
 
   const loadingTask = pdfjsLib.getDocument({
     data: pdfBytes,
