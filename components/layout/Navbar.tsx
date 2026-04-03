@@ -128,27 +128,29 @@ export function Navbar() {
           </div>
 
           {/* Quick links */}
-          {['merge-pdf', 'split-pdf', 'compress-pdf'].map(slug => {
-            const label = slug.split('-').map(w => w.toLowerCase() === 'pdf' ? 'PDF' : w[0].toUpperCase() + w.slice(1)).join(' ')
-            return (
-              <Link
-                key={slug}
-                href={`/${slug}`}
-                className="px-4 py-2 rounded-lg transition-all duration-200"
-                style={{ fontSize: '13px', color: '#94A3B8', fontWeight: 500 }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.color = '#F1F5F9'
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.05)'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.color = '#94A3B8'
-                  e.currentTarget.style.background = 'transparent'
-                }}
-              >
-                {label}
-              </Link>
-            )
-          })}
+          {([
+            { slug: 'merge-pdf', label: 'Merge PDF' },
+            { slug: 'split-pdf', label: 'Split PDF' },
+            { slug: 'ai-summarizer', label: 'AI Summarizer' },
+            { slug: 'pdf-qa', label: 'PDF Q&A' },
+          ] as { slug: string; label: string }[]).map(({ slug, label }) => (
+            <Link
+              key={slug}
+              href={`/${slug}`}
+              className="px-4 py-2 rounded-lg transition-all duration-200"
+              style={{ fontSize: '13px', color: '#94A3B8', fontWeight: 500 }}
+              onMouseEnter={e => {
+                e.currentTarget.style.color = '#F1F5F9'
+                e.currentTarget.style.background = 'rgba(255,255,255,0.05)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.color = '#94A3B8'
+                e.currentTarget.style.background = 'transparent'
+              }}
+            >
+              {label}
+            </Link>
+          ))}
         </div>
 
         {/* CTA */}
