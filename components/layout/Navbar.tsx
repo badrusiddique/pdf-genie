@@ -7,6 +7,12 @@ import { CATEGORIES, CATEGORY_LABELS, getToolsByCategory } from '@/config/tools'
 import { GenieLampIcon } from '@/components/ui/GenieLampIcon'
 import { cn } from '@/lib/utils'
 
+const AVAILABLE_SLUGS = new Set([
+  'merge-pdf', 'split-pdf', 'remove-pages', 'extract-pages', 'organize-pdf', 'scan-to-pdf',
+  'compress-pdf', 'jpg-to-pdf', 'html-to-pdf', 'word-to-pdf', 'excel-to-pdf', 'powerpoint-to-pdf',
+  'ai-summarizer', 'translate-pdf', 'pdf-qa',
+])
+
 export function Navbar() {
   const [megaOpen, setMegaOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -107,14 +113,30 @@ export function Navbar() {
                           <li key={tool.slug}>
                             <Link
                               href={`/${tool.slug}`}
-                              className="block py-1 transition-colors duration-150"
+                              className="flex items-center justify-between py-1 transition-colors duration-150"
                               style={{ fontSize: '12px', color: '#94A3B8' }}
                               onMouseEnter={e => (e.currentTarget.style.color = '#F1F5F9')}
                               onMouseLeave={e => (e.currentTarget.style.color = '#94A3B8')}
                               onClick={() => setMegaOpen(false)}
                               role="menuitem"
                             >
-                              {tool.name}
+                              <span>{tool.name}</span>
+                              {!AVAILABLE_SLUGS.has(tool.slug) && (
+                                <span style={{
+                                  fontSize: '8px',
+                                  fontWeight: 700,
+                                  letterSpacing: '0.05em',
+                                  textTransform: 'uppercase',
+                                  background: 'rgba(100,116,139,0.25)',
+                                  border: '1px solid rgba(100,116,139,0.3)',
+                                  color: '#64748B',
+                                  padding: '1px 4px',
+                                  borderRadius: '3px',
+                                  flexShrink: 0,
+                                }}>
+                                  Soon
+                                </span>
+                              )}
                             </Link>
                           </li>
                         ))}
