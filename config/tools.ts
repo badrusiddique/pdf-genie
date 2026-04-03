@@ -391,7 +391,7 @@ export const tools: Tool[] = [
     maxSizeMB: 100,
   },
 
-  // PDF Intelligence (2 tools)
+  // PDF Intelligence (3 tools)
   {
     slug: 'ai-summarizer',
     name: 'AI Summarizer',
@@ -403,6 +403,18 @@ export const tools: Tool[] = [
     multiple: true,
     maxFiles: 4,
     maxSizeMB: 50,
+  },
+  {
+    slug: 'pdf-qa',
+    name: 'PDF Q&A',
+    description: 'Ask questions and get answers from your PDFs',
+    category: 'intelligence',
+    icon: 'MessageSquare',
+    processingMode: 'ai',
+    acceptedFormats: ['application/pdf'],
+    multiple: true,
+    maxFiles: 5,
+    maxSizeMB: 15,
   },
   {
     slug: 'translate-pdf',

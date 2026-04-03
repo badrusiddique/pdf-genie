@@ -11,8 +11,8 @@ import {
 
 describe('Tool Registry', () => {
   describe('tools array', () => {
-    it('has exactly 31 tools', () => {
-      expect(tools).toHaveLength(31)
+    it('has exactly 32 tools', () => {
+      expect(tools).toHaveLength(32)
     })
 
     it('has no duplicate slugs', () => {
@@ -111,9 +111,9 @@ describe('Tool Registry', () => {
       expect(organizeTools).toHaveLength(6)
     })
 
-    it('intelligence category has exactly 2 tools', () => {
+    it('intelligence category has exactly 3 tools', () => {
       const intelligenceTools = tools.filter((t) => t.category === 'intelligence')
-      expect(intelligenceTools).toHaveLength(2)
+      expect(intelligenceTools).toHaveLength(3)
     })
   })
 
@@ -157,7 +157,7 @@ describe('Tool Registry', () => {
     it('returns correct tools for intelligence category', () => {
       const result = getToolsByCategory('intelligence')
       expect(result.every((t) => t.category === 'intelligence')).toBe(true)
-      expect(result).toHaveLength(2)
+      expect(result).toHaveLength(3)
     })
   })
 
