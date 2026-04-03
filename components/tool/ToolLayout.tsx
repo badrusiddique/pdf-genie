@@ -24,7 +24,7 @@ export function ToolLayout({ children, sidebar, action, sidebarHeader }: ToolLay
     <div
       className="flex"
       style={{
-        height: 'calc(100vh - 64px)',  // viewport minus navbar height
+        height: '100%',  // fills the flex-1 container from ToolPageShell
         overflow: 'hidden',
       }}
     >
