@@ -14,7 +14,7 @@ interface ProgressStep {
 const STEPS: ProgressStep[] = [
   { label: 'Uploading PDF…', pct: 5 },
   { label: 'Extracting text…', pct: 30 },
-  { label: 'Summarising with Kimi K2.5…', pct: 95 },
+  { label: 'Summarising with BART…', pct: 95 },
   { label: 'Done!', pct: 100 },
 ]
 
@@ -67,7 +67,7 @@ export function AiSummarizerTool(_props: { tool: Tool }) {
     animateProgress(5, 30, 1500)
     await new Promise(r => setTimeout(r, 1600))
 
-    // Step 3: Kimi summarising (slow — animate 30→90 over ~45s)
+    // Step 3: BART summarising (slow — animate 30→90 over ~45s)
     setStepLabel(STEPS[2].label)
     animateProgress(30, 90, 45000)
 
@@ -115,7 +115,7 @@ export function AiSummarizerTool(_props: { tool: Tool }) {
     <div className="space-y-4">
       <div className="p-3 rounded-lg text-xs leading-relaxed"
         style={{ background: 'rgba(236,72,153,0.06)', border: '1px solid rgba(236,72,153,0.15)', color: '#94A3B8' }}>
-        Powered by <strong style={{ color: '#F1F5F9' }}>Kimi K2.5</strong> via HuggingFace. Higher quality than BART — may take 30–60 s on first run while the model warms up.
+        Powered by <strong style={{ color: '#F1F5F9' }}>BART Large CNN</strong> via HuggingFace free API. May take 20–30 s on first run while the model warms up.
       </div>
       {error && (
         <p role="alert" className="text-sm px-3 py-2 rounded-lg"
@@ -203,7 +203,7 @@ export function AiSummarizerTool(_props: { tool: Tool }) {
           </div>
 
           <p className="text-xs" style={{ color: '#334155' }}>
-            Kimi K2.5 takes 30–60 s on first run — please don&apos;t close this tab
+            BART may take 20–30 s on first run — please don&apos;t close this tab
           </p>
         </div>
 

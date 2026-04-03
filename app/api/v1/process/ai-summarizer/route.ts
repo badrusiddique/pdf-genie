@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { extractPdfText } from '@/lib/pdf/extractText'
-import { summarizeWithKimi } from '@/lib/ai/summarize'
+import { summarizeText } from '@/lib/ai/summarize'
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData()
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const text = await extractPdfText(bytes)
-    const summary = await summarizeWithKimi(text, apiKey)
+    const summary = await summarizeText(text, apiKey)
     return NextResponse.json({ success: true, summary })
   } catch (err) {
     return NextResponse.json(
