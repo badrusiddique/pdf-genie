@@ -5,7 +5,6 @@ import { MessageSquare, Send, X, FileText, Sparkles, User } from 'lucide-react'
 import { ToolLayout } from '@/components/tool'
 import type { Tool } from '@/config/tools'
 import { formatFileSize } from '@/lib/file-utils'
-import type { ChatMessage } from '@/lib/ai/qa'
 
 interface DisplayMessage {
   role: 'user' | 'assistant'
@@ -68,17 +67,11 @@ export function PdfQaTool({ tool }: PdfQaToolProps) {
     setMessages(newMessages)
     setAsking(true)
 
-    // Build ChatMessage history for the API (all turns so far including the new user message)
-    const apiMessages: ChatMessage[] = newMessages.map(m => ({
-      role: m.role,
-      content: m.content,
-    }))
-
     try {
       const res = await fetch('/api/v1/process/pdf-qa/ask', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiMessages, context }),
+        body: JSON.stringify({ question: userContent, context }),
       })
       const json = await res.json()
       if (!res.ok || !json.success) throw new Error(json?.error?.message ?? `Error ${res.status}`)
@@ -129,7 +122,7 @@ export function PdfQaTool({ tool }: PdfQaToolProps) {
       )}
       <div className="p-3 rounded-lg text-xs leading-relaxed"
         style={{ background: 'rgba(236,72,153,0.06)', border: '1px solid rgba(236,72,153,0.12)', color: '#94A3B8' }}>
-        Powered by <strong style={{ color: '#F1F5F9' }}>Kimi K2.5</strong> via HuggingFace. Answers are grounded in your documents. Up to {tool.maxFiles} PDFs, 15 MB each.
+        Powered by <strong style={{ color: '#F1F5F9' }}>RoBERTa</strong> via HuggingFace. Extracts answers directly from your document text — fast responses, no hallucination. Up to {tool.maxFiles} PDFs, 15 MB each.
       </div>
       {error && (
         <p role="alert" className="text-sm px-3 py-2 rounded-lg"
@@ -168,7 +161,7 @@ export function PdfQaTool({ tool }: PdfQaToolProps) {
           {stage === 'chat' && (
             <div className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#10B981' }} />
-              <span className="text-xs" style={{ color: '#10B981' }}>Kimi K2.5</span>
+              <span className="text-xs" style={{ color: '#10B981' }}>RoBERTa</span>
             </div>
           )}
         </div>

@@ -1,30 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { chatWithKimi, type ChatMessage } from '@/lib/ai/qa'
+import { answerQuestion } from '@/lib/ai/qa'
 
 export async function POST(req: NextRequest) {
-  let body: { messages?: ChatMessage[]; context?: string } | null = null
+  let body: { question?: string; context?: string } | null = null
 
   try {
     body = await req.json()
   } catch {
     return NextResponse.json(
-      { success: false, error: { code: 'INVALID_BODY', message: 'Request body must be JSON' } },
+      { success: false, error: { code: 'INVALID_BODY', message: 'Request body must be JSON with question and context' } },
       { status: 400 },
     )
   }
 
-  if (!body || !Array.isArray(body.messages) || typeof body.context !== 'string') {
+  if (!body || typeof body.question !== 'string' || typeof body.context !== 'string') {
     return NextResponse.json(
-      { success: false, error: { code: 'INVALID_BODY', message: 'Body must include messages array and context string' } },
+      { success: false, error: { code: 'INVALID_BODY', message: 'Body must include question and context strings' } },
       { status: 400 },
     )
   }
 
-  const { messages, context } = body
+  const { question, context } = body
 
-  if (messages.length === 0) {
+  if (!question.trim()) {
     return NextResponse.json(
-      { success: false, error: { code: 'EMPTY_MESSAGES', message: 'Messages array cannot be empty' } },
+      { success: false, error: { code: 'EMPTY_QUESTION', message: 'Question cannot be empty' } },
       { status: 400 },
     )
   }
@@ -32,8 +32,8 @@ export async function POST(req: NextRequest) {
   const apiKey = process.env.HUGGINGFACE_API_KEY ?? ''
 
   try {
-    const answer = await chatWithKimi(messages, context, apiKey)
-    return NextResponse.json({ success: true, answer })
+    const result = await answerQuestion(question, context, apiKey)
+    return NextResponse.json({ success: true, answer: result.answer, score: result.score })
   } catch (err) {
     return NextResponse.json(
       { success: false, error: { code: 'QA_FAILED', message: err instanceof Error ? err.message : 'Q&A failed' } },
