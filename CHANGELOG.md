@@ -4,6 +4,16 @@ All notable changes to pdf-genie are documented here.
 
 ## [Unreleased]
 
+## Phase 3 — Convert to PDF
+
+### Added
+- **JPG/PNG to PDF** — client-side conversion with page size (fit/A4/Letter), orientation, and margin options; supports JPEG, PNG, WebP up to 20 files
+- **HTML to PDF** — server-side via puppeteer; wraps HTML fragments in print-ready document with CSS reset
+- **Word to PDF** — server-side via mammoth (DOCX→HTML) + puppeteer; text and basic formatting preserved
+- **Excel to PDF** — server-side via ExcelJS (XLSX→HTML tables) + puppeteer; all sheets rendered with page breaks
+- **PowerPoint to PDF** — server-side via jszip XML slide parsing + puppeteer; text content preserved, one page per slide
+- **Shared browser launcher** — `lib/convert/browser.ts` with `@sparticuz/chromium-min` + `puppeteer-core` for Vercel-compatible serverless rendering
+
 ### Added
 - **Compress PDF** — first server-side tool (Phase 2): `lib/pdf/compress.ts` with three compression levels (`screen`, `recommended`, `printer`), using pdf-lib object stream compression and sharp 0.34.5 for image downsampling
 - **Compress PDF API route** — `app/api/v1/process/compress-pdf` (POST), versioned under `/api/v1/`, 50 MB file size cap, streams compressed PDF back with size headers (`X-Original-Size`, `X-Compressed-Size`)
