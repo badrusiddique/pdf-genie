@@ -35,7 +35,7 @@ describe('extractArabicBlocks', () => {
       makeMockDoc([
         makeItem('مرحبا', 100, 200, 11, 50),
         makeItem('Hello', 200, 200, 11, 40),
-      ]) as ReturnType<typeof pdfjs.getDocument>,
+      ]) as unknown as ReturnType<typeof pdfjs.getDocument>,
     )
 
     const { extractArabicBlocks } = await import('@/lib/pdf/layout-extractor')
@@ -49,7 +49,7 @@ describe('extractArabicBlocks', () => {
       makeMockDoc([
         makeItem('ال', 100, 200, 11, 20),
         makeItem('الفيصلي', 150, 200, 11, 60),
-      ]) as ReturnType<typeof pdfjs.getDocument>,
+      ]) as unknown as ReturnType<typeof pdfjs.getDocument>,
     )
 
     const { extractArabicBlocks } = await import('@/lib/pdf/layout-extractor')
@@ -60,7 +60,7 @@ describe('extractArabicBlocks', () => {
 
   it('returns correct page index (0-indexed)', async () => {
     vi.mocked(pdfjs.getDocument).mockReturnValue(
-      makeMockDoc([makeItem('مرحبا', 100, 200, 11, 50)]) as ReturnType<typeof pdfjs.getDocument>,
+      makeMockDoc([makeItem('مرحبا', 100, 200, 11, 50)]) as unknown as ReturnType<typeof pdfjs.getDocument>,
     )
 
     const { extractArabicBlocks } = await import('@/lib/pdf/layout-extractor')
@@ -70,7 +70,7 @@ describe('extractArabicBlocks', () => {
 
   it('computes bbox x0/x1 from transform and width', async () => {
     vi.mocked(pdfjs.getDocument).mockReturnValue(
-      makeMockDoc([makeItem('مرحبا', 100, 200, 11, 50)]) as ReturnType<typeof pdfjs.getDocument>,
+      makeMockDoc([makeItem('مرحبا', 100, 200, 11, 50)]) as unknown as ReturnType<typeof pdfjs.getDocument>,
     )
 
     const { extractArabicBlocks } = await import('@/lib/pdf/layout-extractor')
@@ -82,7 +82,7 @@ describe('extractArabicBlocks', () => {
 
   it('bbox y0 is below baseline and y1 is above baseline', async () => {
     vi.mocked(pdfjs.getDocument).mockReturnValue(
-      makeMockDoc([makeItem('مرحبا', 100, 200, 11, 50)]) as ReturnType<typeof pdfjs.getDocument>,
+      makeMockDoc([makeItem('مرحبا', 100, 200, 11, 50)]) as unknown as ReturnType<typeof pdfjs.getDocument>,
     )
 
     const { extractArabicBlocks } = await import('@/lib/pdf/layout-extractor')
@@ -97,7 +97,7 @@ describe('extractArabicBlocks', () => {
       makeMockDoc([
         makeItem('Hello', 100, 200, 11, 40),
         makeItem('World', 200, 200, 11, 45),
-      ]) as ReturnType<typeof pdfjs.getDocument>,
+      ]) as unknown as ReturnType<typeof pdfjs.getDocument>,
     )
 
     const { extractArabicBlocks } = await import('@/lib/pdf/layout-extractor')
