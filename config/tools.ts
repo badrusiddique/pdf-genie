@@ -428,6 +428,18 @@ export const tools: Tool[] = [
     maxFiles: 1,
     maxSizeMB: 15,
   },
+  {
+    slug: 'arabic-pdf-translator',
+    name: 'Arabic PDF Translator',
+    description: 'Translate Arabic PDFs to English with layout preserved',
+    category: 'intelligence',
+    icon: 'Languages',
+    processingMode: 'ai',
+    acceptedFormats: ['application/pdf'],
+    multiple: false,
+    maxFiles: 1,
+    maxSizeMB: 15,
+  },
 ]
 
 /** Returns all tools belonging to the given category, in registration order. */

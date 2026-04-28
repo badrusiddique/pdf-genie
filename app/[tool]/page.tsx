@@ -33,6 +33,7 @@ async function getToolComponent(slug: string) {
     case 'ai-summarizer': return (await import('@/components/tool/tools/AiSummarizerTool')).AiSummarizerTool
     case 'translate-pdf': return (await import('@/components/tool/tools/TranslatePdfTool')).TranslatePdfTool
     case 'pdf-qa': return (await import('@/components/tool/tools/PdfQaTool')).PdfQaTool
+    case 'arabic-pdf-translator': return (await import('@/components/tool/tools/ArabicPdfTranslatorTool')).ArabicPdfTranslatorTool
     default: return null
   }
 }
