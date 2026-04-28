@@ -34,6 +34,27 @@ async function getToolComponent(slug: string) {
     case 'translate-pdf': return (await import('@/components/tool/tools/TranslatePdfTool')).TranslatePdfTool
     case 'pdf-qa': return (await import('@/components/tool/tools/PdfQaTool')).PdfQaTool
     case 'arabic-pdf-translator': return (await import('@/components/tool/tools/ArabicPdfTranslatorTool')).ArabicPdfTranslatorTool
+    // Phase 2 — Repair & OCR
+    case 'repair-pdf': return (await import('@/components/tool/tools/RepairPdfTool')).RepairPdfTool
+    case 'ocr-pdf': return (await import('@/components/tool/tools/OcrPdfTool')).OcrPdfTool
+    // Phase 4 — Convert from PDF
+    case 'pdf-to-jpg': return (await import('@/components/tool/tools/PdfToJpgTool')).PdfToJpgTool
+    case 'pdf-to-word': return (await import('@/components/tool/tools/PdfToWordTool')).PdfToWordTool
+    case 'pdf-to-excel': return (await import('@/components/tool/tools/PdfToExcelTool')).PdfToExcelTool
+    case 'pdf-to-powerpoint': return (await import('@/components/tool/tools/PdfToPowerPointTool')).PdfToPowerPointTool
+    case 'pdf-to-pdfa': return (await import('@/components/tool/tools/PdfToPdfaTool')).PdfToPdfaTool
+    // Phase 5 — Edit
+    case 'rotate-pdf': return (await import('@/components/tool/tools/RotatePdfTool')).RotatePdfTool
+    case 'add-page-numbers': return (await import('@/components/tool/tools/AddPageNumbersTool')).AddPageNumbersTool
+    case 'add-watermark': return (await import('@/components/tool/tools/AddWatermarkTool')).AddWatermarkTool
+    case 'crop-pdf': return (await import('@/components/tool/tools/CropPdfTool')).CropPdfTool
+    case 'edit-pdf': return (await import('@/components/tool/tools/EditPdfTool')).EditPdfTool
+    case 'redact-pdf': return (await import('@/components/tool/tools/RedactPdfTool')).RedactPdfTool
+    case 'sign-pdf': return (await import('@/components/tool/tools/SignPdfTool')).SignPdfTool
+    case 'compare-pdf': return (await import('@/components/tool/tools/ComparePdfTool')).ComparePdfTool
+    // Phase 6 — Security
+    case 'unlock-pdf': return (await import('@/components/tool/tools/UnlockPdfTool')).UnlockPdfTool
+    case 'protect-pdf': return (await import('@/components/tool/tools/ProtectPdfTool')).ProtectPdfTool
     default: return null
   }
 }
