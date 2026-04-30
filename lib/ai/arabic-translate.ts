@@ -24,6 +24,49 @@ function applyGlossary(text: string, glossary: GlossaryEntry[]): string {
   return result
 }
 
+// ── Post-processing helpers ───────────────────────────────────────────────────
+
+function fixTranslation(text: string): string {
+  // Fix reversed season years: "2026/2025" → "2025/2026"
+  return text.replace(/\b(\d{4})\/(\d{4})\b/g, (_, y1, y2) => {
+    const [a, b] = [parseInt(y1), parseInt(y2)]
+    return a === b + 1 ? `${y2}/${y1}` : `${y1}/${y2}`
+  })
+}
+
+// Heuristic: detect two Yellow Cards for the same player and annotate the second.
+// Player key = first jersey-number-like token found in ±5 blocks, excluding minute
+// markers (numbers followed by apostrophe/prime).
+function inferRedCards(translations: string[]): string[] {
+  const yellows = new Map<string, number>() // playerKey → index of first yellow
+  const result = [...translations]
+  const yellowRe = /\byellow\s+card\b/i
+  // Minute markers look like "30'" or "42'" — exclude them
+  // Jersey numbers are standalone digits (1-99) not followed by ' or "
+  const jerseyRe = /(?<!\d)(\d{1,2})(?!')(?!\d)/g
+
+  for (let i = 0; i < result.length; i++) {
+    if (!yellowRe.test(result[i])) continue
+
+    // Look in ±5 blocks, strip minute-marker suffixes, pick first remaining number
+    const window = result.slice(Math.max(0, i - 5), i + 6).join(' ')
+    // Remove minute markers before scanning for jersey numbers
+    const stripped = window.replace(/\d{1,3}'/g, '').replace(/\d{1,3}"/g, '')
+    const jerseyMatch = jerseyRe.exec(stripped)
+    jerseyRe.lastIndex = 0 // reset stateful regex
+    const playerKey = jerseyMatch ? jerseyMatch[1] : `pos_${i}`
+
+    if (yellows.has(playerKey)) {
+      result[i] = result[i] + ' → Red Card / Dismissed'
+      yellows.delete(playerKey)
+    } else {
+      yellows.set(playerKey, i)
+    }
+  }
+
+  return result
+}
+
 async function translateChunk(texts: string[], apiKey: string): Promise<string[]> {
   const result = await hfInference<Array<{ translation_text: string }>>(
     MODEL,
@@ -74,10 +117,11 @@ export async function translateArabicBlocks(
     MAX_CONCURRENT,
   )
 
-  const translations = chunkResults.flat()
+  const raw = chunkResults.flat().map(t => applyGlossary(t, glossary))
 
-  // Post-pass: apply glossary to translated output as safety net
-  return translations.map(t => applyGlossary(t, glossary))
+  // Post-pass fixes
+  const fixed = raw.map(fixTranslation)
+  return inferRedCards(fixed)
 }
 
 export function extractEntityCandidates(

@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     if (!isPdf(refBytes)) return err('INVALID_PDF', 'reference_pdf is not a valid PDF', 422)
 
     const [arabicBlocks, referenceText] = await Promise.all([
-      extractArabicBlocks(arabicBytes),
+      extractArabicBlocks(arabicBytes.slice()),
       extractPdfText(refBytes),
     ])
 
@@ -65,7 +65,8 @@ export async function POST(req: NextRequest) {
   }
 
   // ── Full translation mode ──────────────────────────────────────────────
-  const blocks = await extractArabicBlocks(arabicBytes)
+  // .slice() copies the buffer — pdfjs-dist transfers (detaches) the original ArrayBuffer
+  const blocks = await extractArabicBlocks(arabicBytes.slice())
   const translations = await translateArabicBlocks(blocks, glossary, apiKey)
   const translatedBytes = await rebuildPdf(arabicBytes, blocks, translations)
 

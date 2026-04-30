@@ -5,44 +5,90 @@ export interface TextBlock {
   fontSize: number
 }
 
-function isArabic(text: string): boolean {
-  return /[؀-ۿ]/.test(text)
+// Covers base Arabic, Extended Arabic, Presentation Forms-A and -B
+function isArabicChar(ch: string): boolean {
+  const cp = ch.codePointAt(0) ?? 0
+  return (
+    (cp >= 0x0600 && cp <= 0x06FF) || // Base Arabic
+    (cp >= 0x0750 && cp <= 0x077F) || // Arabic Supplement
+    (cp >= 0xFB50 && cp <= 0xFDFF) || // Presentation Forms-A
+    (cp >= 0xFE70 && cp <= 0xFEFF)    // Presentation Forms-B
+  )
+}
+
+function hasArabic(text: string): boolean {
+  return [...text].some(isArabicChar)
+}
+
+interface GlyphInfo {
+  x: number
+  y: number
+  w: number
+  fontSize: number
+  char: string
 }
 
 export async function extractArabicBlocks(pdfBytes: Uint8Array): Promise<TextBlock[]> {
-  // Dynamic import to avoid SSR issues.
-  // canvas is aliased to empty module in next.config.ts so pdfjs-dist loads cleanly on Vercel.
-  // workerSrc = '' disables the web worker — required for serverless environments.
-  const pdfjs = await import('pdfjs-dist')
-  pdfjs.GlobalWorkerOptions.workerSrc = ''
-
-  const loadingTask = pdfjs.getDocument({
-    data: pdfBytes,
-    useWorkerFetch: false,
-    isEvalSupported: false,
-    verbosity: 0,
-  })
-  const doc = await loadingTask.promise
+  // unpdf's getDocumentProxy uses a serverless-safe pdfjs bundle — no DOMMatrix / worker issues
+  const { getDocumentProxy } = await import('unpdf')
+  const doc = await getDocumentProxy(pdfBytes)
   const blocks: TextBlock[] = []
 
   for (let pageNum = 1; pageNum <= doc.numPages; pageNum++) {
     const page = await doc.getPage(pageNum)
     const content = await page.getTextContent()
 
-    for (const item of content.items) {
-      if (!('str' in item)) continue // skip TextMarkedContent
-      const text = item.str.trim()
-      if (text.length < 3 || !isArabic(text)) continue
+    // Bucket Arabic glyphs by y-baseline (1pt buckets)
+    const lineMap = new Map<number, GlyphInfo[]>()
 
-      // transform = [a, b, c, d, e, f]: e=x, f=y(baseline from bottom), d≈fontSize
+    for (const item of content.items) {
+      if (!('str' in item)) continue
+      const char = item.str
+      if (!char || !hasArabic(char)) continue
+
       const [, , , d, e, f] = item.transform
       const fontSize = Math.abs(d) || 11
-      const width = item.width || fontSize * text.length * 0.5
-      // Cover ascenders (~0.85× above baseline) and descenders (~0.25× below)
-      const y0 = f - fontSize * 0.25
-      const y1 = f + fontSize * 0.85
+      const yKey = Math.round(f) // 1pt bucket
 
-      blocks.push({ page: pageNum - 1, bbox: [e, y0, e + width, y1], text, fontSize })
+      if (!lineMap.has(yKey)) lineMap.set(yKey, [])
+      lineMap.get(yKey)!.push({ x: e, y: f, w: item.width || fontSize * 0.55, fontSize, char })
+    }
+
+    // For each line: sort by x descending (RTL logical order), group into words
+    for (const glyphs of lineMap.values()) {
+      glyphs.sort((a, b) => b.x - a.x) // descending = logical Arabic order (right → left)
+
+      // Group into words: gap > half a character width marks a word boundary
+      const words: GlyphInfo[][] = []
+      let current: GlyphInfo[] = []
+
+      for (let i = 0; i < glyphs.length; i++) {
+        if (i === 0) { current.push(glyphs[i]); continue }
+        const prev = glyphs[i - 1]
+        // In descending-x order, prev.x > cur.x; gap is the space between them
+        const gap = prev.x - (glyphs[i].x + glyphs[i].w)
+        if (gap > prev.fontSize * 0.4) {
+          words.push(current)
+          current = [glyphs[i]]
+        } else {
+          current.push(glyphs[i])
+        }
+      }
+      if (current.length > 0) words.push(current)
+
+      for (const word of words) {
+        const text = word.map(g => g.char).join('')
+        if (!text.trim()) continue
+
+        const x0 = Math.min(...word.map(g => g.x))
+        const x1 = Math.max(...word.map(g => g.x + g.w))
+        const fontSize = word[0].fontSize
+        const y = word[0].y
+        const y0 = y - fontSize * 0.25
+        const y1 = y + fontSize * 0.85
+
+        blocks.push({ page: pageNum - 1, bbox: [x0, y0, x1, y1], text, fontSize })
+      }
     }
   }
 

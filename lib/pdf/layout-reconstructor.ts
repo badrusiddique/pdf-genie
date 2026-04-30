@@ -14,7 +14,7 @@ export async function rebuildPdf(
   const byPage = new Map<number, Array<{ block: TextBlock; translation: string }>>()
   for (let i = 0; i < blocks.length; i++) {
     const translation = translations[i] ?? ''
-    if (!translation || translation.startsWith('[')) continue // skip error placeholders
+    if (!translation || translation.startsWith('[')) continue
     const list = byPage.get(blocks[i].page) ?? []
     list.push({ block: blocks[i], translation })
     byPage.set(blocks[i].page, list)
@@ -22,42 +22,57 @@ export async function rebuildPdf(
 
   for (const [pageIdx, items] of byPage) {
     const page = pages[pageIdx]
-    if (!page) continue // skip out-of-range page references
+    if (!page) continue
 
-    const { height: pageHeight } = page.getSize()
+    const { width: pageWidth, height: pageHeight } = page.getSize()
 
     for (const { block, translation } of items) {
       const [x0, y0, x1, y1] = block.bbox
       const boxWidth = Math.max(1, x1 - x0)
-      // Clamp y coordinates to page bounds
-      const drawY0 = Math.max(0, Math.min(y0, pageHeight))
-      const drawY1 = Math.max(0, Math.min(y1, pageHeight))
-      const drawHeight = Math.max(1, drawY1 - drawY0)
 
-      // 1. White rectangle to blank the Arabic text
+      // Clamp white rectangle to exact Arabic bbox — no expansion to avoid clipping adjacent content
+      const rectX  = Math.max(0, x0)
+      const rectY  = Math.max(0, Math.min(y0, pageHeight))
+      const rectY1 = Math.max(0, Math.min(y1, pageHeight))
+      const rectH  = Math.max(1, rectY1 - rectY)
+      const rectW  = Math.min(boxWidth, pageWidth - rectX)
+
+      // 1. White rectangle — exact bbox, no expansion, to preserve adjacent content
       page.drawRectangle({
-        x: x0,
-        y: drawY0,
-        width: boxWidth,
-        height: drawHeight,
+        x: rectX,
+        y: rectY,
+        width: rectW,
+        height: rectH,
         color: rgb(1, 1, 1),
         borderWidth: 0,
       })
 
-      // 2. Insert English text — font size matched to original, clamped for safety
-      const fontSize = Math.max(6, Math.min(block.fontSize, drawHeight * 0.85, 24))
+      // 2. Scale font to fit English text inside the original box width
+      let fontSize = Math.max(5, Math.min(block.fontSize, rectH * 0.82, 18))
+      const rawWidth = font.widthOfTextAtSize(translation, fontSize)
+      if (rawWidth > boxWidth && rawWidth > 0) {
+        fontSize = Math.max(5, fontSize * (boxWidth / rawWidth) * 0.92)
+      }
+
+      // 3. Truncate to fit — no maxWidth on drawText (that wraps vertically into other content)
+      let display = translation
+      if (font.widthOfTextAtSize(display, fontSize) > boxWidth) {
+        while (display.length > 2 && font.widthOfTextAtSize(display + '…', fontSize) > boxWidth) {
+          display = display.slice(0, -1)
+        }
+        display += '…'
+      }
+
       try {
-        page.drawText(translation, {
+        page.drawText(display, {
           x: x0,
-          y: drawY0 + 2,
+          y: rectY + 2,
           size: fontSize,
           font,
           color: rgb(0, 0, 0),
-          maxWidth: boxWidth,
-          lineHeight: fontSize * 1.2,
         })
       } catch {
-        // Best-effort — skip if text can't be inserted (e.g. oversized)
+        // Skip if pdf-lib rejects the draw (e.g. zero-size box)
       }
     }
   }
